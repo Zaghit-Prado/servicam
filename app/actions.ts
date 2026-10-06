@@ -17,7 +17,9 @@ export async function loginOrRegister(formData: FormData) {
   const email = formData.get("email") as string;
   const name = formData.get("name") as string;
 
-  if (!email) return { error: "El email es requerido" };
+  if (!email) {
+    throw new Error("El email es requerido");
+  }
 
   let user = await prisma.user.findUnique({ where: { email } });
 
