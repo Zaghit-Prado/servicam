@@ -5,8 +5,8 @@ import { ChevronLeft, MapPin, Clock, Star, Heart, CheckCircle2 } from "lucide-re
 import FavoriteButton from "./FavoriteButton";
 import { getCurrentUser } from "@/app/actions";
 
-export default async function ServicioDetalle({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function ServicioDetalle({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
   const servicio = await prisma.serviceRequest.findUnique({
     where: { id },
