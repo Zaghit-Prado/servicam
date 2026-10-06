@@ -12,27 +12,63 @@ export async function getMapServices() {
   });
 }
 
-// Iniciar sesión o registrarse
-export async function loginOrRegister(formData: FormData) {
-  const email = formData.get("email") as string;
-  const name = formData.get("name") as string;
+// 1. Solicitar código de verificación (Magic Code)
+export async function requestLoginCode(email: string) {
+  if (!email) throw new Error("El email es requerido");
 
-  if (!email) {
-    throw new Error("El email es requerido");
-  }
+  const code = Math.floor(100000 + Math.random() * 900000).toString(); // 6 dígitos
+  const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
 
   let user = await prisma.user.findUnique({ where: { email } });
 
-  // Si no existe, lo creamos (Registro)
   if (!user) {
     user = await prisma.user.create({
       data: {
         email,
-        name: name || email.split("@")[0], // Nombre por defecto
+        name: email.split("@")[0],
         role: "CLIENT",
+        otp: code,
+        otpExpires: expires,
+      },
+    });
+  } else {
+    await prisma.user.update({
+      where: { email },
+      data: {
+        otp: code,
+        otpExpires: expires,
       },
     });
   }
+
+  // SIMULACIÓN DE ENVÍO DE CORREO:
+  console.log(`\n\n=== CORREO SIMULADO PARA ${email} ===`);
+  console.log(`Tu código de confirmación es: ${code}`);
+  console.log(`==========================================\n\n`);
+  
+  // Retornamos el código para poder mostrarlo en la UI temporalmente (ya que no hay envío de correos real configurado)
+  return { success: true, simulatedCode: code };
+}
+
+// 2. Verificar el código e iniciar sesión
+export async function verifyLoginCode(email: string, code: string) {
+  if (!email || !code) throw new Error("Datos incompletos");
+
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user || user.otp !== code || !user.otpExpires || user.otpExpires < new Date()) {
+    throw new Error("Código inválido o expirado");
+  }
+
+  // Limpiar OTP y marcar verificado
+  await prisma.user.update({
+    where: { email },
+    data: {
+      otp: null,
+      otpExpires: null,
+      emailVerified: new Date(),
+    },
+  });
 
   // Guardar sesión en cookies
   const cookieStore = await cookies();
