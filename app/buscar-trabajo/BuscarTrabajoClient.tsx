@@ -4,10 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, Search, SlidersHorizontal, MapPin, Clock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import FavoriteButton from "@/app/servicio/[id]/FavoriteButton";
 
-export default function BuscarTrabajoClient({ initialServices }: { initialServices: any[] }) {
+export default function BuscarTrabajoClient({ 
+  initialServices,
+  savedServiceIds = [] 
+}: { 
+  initialServices: any[],
+  savedServiceIds?: string[]
+}) {
   const [filtro, setFiltro] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const savedSet = new Set(savedServiceIds);
   const filtros = ["Todos", "Reparaciones", "Gasfitería", "Electricidad", "Carpintería"];
 
   // Filtrar en el cliente
@@ -88,7 +96,10 @@ export default function BuscarTrabajoClient({ initialServices }: { initialServic
                   <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
                     {servicio.category}
                   </div>
-                  <span className="font-bold text-gray-900">S/ {servicio.minPrice} - {servicio.maxPrice}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-gray-900">S/ {servicio.minPrice} - {servicio.maxPrice}</span>
+                    <FavoriteButton serviceId={servicio.id} initialFavorited={savedSet.has(servicio.id)} variant="dark-card" />
+                  </div>
                 </div>
                 <h3 className="font-bold text-lg text-gray-900 mb-1">{servicio.title}</h3>
                 <p className="text-sm text-gray-500 line-clamp-2 mb-4">{servicio.description}</p>

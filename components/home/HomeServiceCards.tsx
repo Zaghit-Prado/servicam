@@ -1,8 +1,23 @@
 import Link from "next/link";
-import { Heart, Star, ArrowRight } from "lucide-react";
+import { Star, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/app/actions";
+import FavoriteButton from "@/app/servicio/[id]/FavoriteButton";
 
 export async function HomeServiceCards() {
+  const user = await getCurrentUser();
+  let savedServiceIds = new Set<string>();
+
+  if (user) {
+    const userWithSaved = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { savedServices: { select: { id: true } } }
+    });
+    if (userWithSaved) {
+      savedServiceIds = new Set(userWithSaved.savedServices.map(s => s.id));
+    }
+  }
+
   // Fetch prestadores (proveedores) and sus reviews
   const prestadores = await prisma.user.findMany({
     where: { role: "PROVIDER" },
@@ -94,10 +109,7 @@ export async function HomeServiceCards() {
                 )}
                 <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-10"></Link>
                 <div className="absolute top-3 right-3 z-20">
-                  {/* Este botón no lo conecto aquí al Server Action de Favoritos por simplicidad, pero se puede luego. */}
-                  <button className="p-1">
-                    <Heart className="w-6 h-6 text-white stroke-[1.5px] drop-shadow-md hover:fill-red-500 hover:text-red-500 transition-colors" />
-                  </button>
+                  <FavoriteButton serviceId={servicio.id} initialFavorited={savedServiceIds.has(servicio.id)} variant="card" />
                 </div>
               </div>
               <Link href={`/servicio/${servicio.id}`} className="block">
