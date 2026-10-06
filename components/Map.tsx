@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Circle, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -57,16 +57,27 @@ export default function Map({ services, selectedId, onSelect }: { services: any[
       {/* Ubicación del usuario */}
       <Marker position={[-12.046374, -77.042793]} icon={userIcon}></Marker>
 
-      {/* Pines de Servicios Dinámicos */}
+      {/* Pines de Servicios Dinámicos con Área Aproximada (Círculo) */}
       {services.map((svc) => (
-        <Marker 
-          key={svc.id} 
-          position={[svc.latitude, svc.longitude]} 
-          icon={createPriceIcon(svc.minPrice, selectedId === svc.id)}
-          eventHandlers={{
-            click: () => onSelect(svc.id),
-          }}
-        />
+        <div key={svc.id}>
+          {/* Círculo de privacidad */}
+          <Circle 
+            center={[svc.latitude, svc.longitude]} 
+            radius={400} // 400 metros de radio aproximado
+            pathOptions={{ fillColor: '#5b67d8', color: 'transparent', fillOpacity: 0.15 }}
+            eventHandlers={{
+              click: () => onSelect(svc.id),
+            }}
+          />
+          {/* Marcador de Precio encima del área */}
+          <Marker 
+            position={[svc.latitude, svc.longitude]} 
+            icon={createPriceIcon(svc.minPrice, selectedId === svc.id)}
+            eventHandlers={{
+              click: () => onSelect(svc.id),
+            }}
+          />
+        </div>
       ))}
     </MapContainer>
   );

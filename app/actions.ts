@@ -140,6 +140,8 @@ export async function publishService(formData: FormData) {
   
   const urgency = (formData.get("urgency") as string) || "NORMAL";
   const base64Image = formData.get("images") as string;
+  const latitude = Number(formData.get("latitude"));
+  const longitude = Number(formData.get("longitude"));
 
   // Si no subieron foto, usamos un placeholder. Si subieron, usamos la de base64.
   const finalImage = base64Image ? base64Image : "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=600&q=80";
@@ -154,9 +156,8 @@ export async function publishService(formData: FormData) {
       minPrice,
       maxPrice,
       clientId: user.id,
-      // Coordenadas aleatorias cerca del centro de la ciudad para simular
-      latitude: -12.046 + (Math.random() - 0.5) * 0.05,
-      longitude: -77.042 + (Math.random() - 0.5) * 0.05,
+      latitude: latitude || -12.046 + (Math.random() - 0.5) * 0.05,
+      longitude: longitude || -77.042 + (Math.random() - 0.5) * 0.05,
       images: finalImage,
     }
   });

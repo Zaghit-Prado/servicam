@@ -2,14 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Camera, ImagePlus, ChevronLeft, MapPin, X } from "lucide-react";
 import { publishService } from "@/app/actions";
+
+const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[300px] bg-gray-100 rounded-2xl flex items-center justify-center text-gray-500 text-sm font-semibold border border-brand-200">Cargando mapa...</div>
+});
 
 export default function PublicarServicio() {
   const [categoria, setCategoria] = useState("Reparaciones");
   const [urgency, setUrgency] = useState("NORMAL");
   const [image64, setImage64] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   const categorias = ["Gasfitería", "Electricidad", "Carpintería", "Armado de Muebles", "Reparaciones", "Pintura"];
   const urgencias = [
@@ -74,6 +82,8 @@ export default function PublicarServicio() {
         <input type="hidden" name="category" value={categoria} />
         <input type="hidden" name="urgency" value={urgency} />
         <input type="hidden" name="images" value={image64} />
+        {latitude && <input type="hidden" name="latitude" value={latitude} />}
+        {longitude && <input type="hidden" name="longitude" value={longitude} />}
         
         {/* Fotos */}
         <section>
@@ -198,26 +208,29 @@ export default function PublicarServicio() {
 
         {/* Ubicación Visual */}
         <section>
-          <h2 className="text-sm font-bold text-brand-900 mb-3">Ubicación</h2>
-          <button type="button" className="w-full flex items-center gap-3 bg-white shadow-sm border border-brand-200 rounded-2xl p-4 text-left hover:bg-brand-50 transition-colors">
-            <div className="bg-brand-100 p-2 rounded-full">
-              <MapPin className="w-5 h-5 text-brand-500" />
-            </div>
-            <div>
-              <p className="font-semibold text-brand-900">Usar mi ubicación actual</p>
-              <p className="text-xs text-gray-500">Privado, solo se usa para calcular distancias</p>
-            </div>
-          </button>
+          <h2 className="text-sm font-bold text-brand-900 mb-3">Ubicación exacta</h2>
+          <p className="text-xs text-gray-500 mb-3">Toca el mapa para indicar dónde necesitas el servicio. La ubicación exacta solo la verá el prestador contratado; los demás verán un área aproximada.</p>
+          
+          <LocationPickerMap 
+            onLocationChange={(lat, lng) => {
+              // The Map is a client component, but since it uses leaflet it must be loaded dynamically!
+              // Wait, I need to load LocationPickerMap with next/dynamic!
+              // I will do that at the top of the file
+              setLatitude(lat);
+              setLongitude(lng);
+            }} 
+          />
+          {/* We will need to add hidden inputs for latitude and longitude */}
         </section>
 
         {/* Footer Fixed Action Button */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 z-50 shadow-[0_-10px_20px_rgb(0,0,0,0.05)]">
           <button 
             type="submit" 
-            disabled={isPublishing}
+            disabled={isPublishing || !latitude || !longitude}
             className="w-full max-w-md mx-auto block bg-brand-500 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-brand-700 transition-colors disabled:opacity-50"
           >
-            {isPublishing ? "Publicando..." : "Publicar Solicitud"}
+            {isPublishing ? "Publicando..." : (!latitude ? "Falta ubicación" : "Publicar Solicitud")}
           </button>
         </div>
       </form>
