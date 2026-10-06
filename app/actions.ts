@@ -137,6 +137,12 @@ export async function publishService(formData: FormData) {
   const category = formData.get("category") as string;
   const minPrice = Number(formData.get("minPrice"));
   const maxPrice = Number(formData.get("maxPrice"));
+  
+  const urgency = (formData.get("urgency") as string) || "NORMAL";
+  const base64Image = formData.get("images") as string;
+
+  // Si no subieron foto, usamos un placeholder. Si subieron, usamos la de base64.
+  const finalImage = base64Image ? base64Image : "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=600&q=80";
 
   // Crear servicio en Prisma
   await prisma.serviceRequest.create({
@@ -144,13 +150,14 @@ export async function publishService(formData: FormData) {
       title: title || "Servicio solicitado",
       description,
       category: category || "Reparaciones",
+      urgency,
       minPrice,
       maxPrice,
       clientId: user.id,
       // Coordenadas aleatorias cerca del centro de la ciudad para simular
       latitude: -12.046 + (Math.random() - 0.5) * 0.05,
       longitude: -77.042 + (Math.random() - 0.5) * 0.05,
-      images: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=600&q=80",
+      images: finalImage,
     }
   });
 
