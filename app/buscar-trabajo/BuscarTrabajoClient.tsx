@@ -148,6 +148,14 @@ export default function BuscarTrabajoClient({
         </AnimatePresence>
       </main>
 
+      {/* Floating Map Button */}
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[50]">
+        <Link href="/mapa" className="bg-[#222222] hover:bg-black text-white px-5 py-3 rounded-full font-bold flex items-center gap-2 shadow-[0_8px_20px_rgb(0,0,0,0.2)] transition-transform hover:scale-105">
+          <span>Mapa</span>
+          <MapPin className="w-4 h-4" />
+        </Link>
+      </div>
+
       {/* Modal de Filtros */}
       <AnimatePresence>
         {isFilterModalOpen && (
@@ -198,7 +206,7 @@ export default function BuscarTrabajoClient({
                 onClick={applyFilters}
                 className="w-full bg-[#1853db] hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors"
               >
-                Aplicar filtros
+                Mostrar resultados
               </button>
             </motion.div>
           </>

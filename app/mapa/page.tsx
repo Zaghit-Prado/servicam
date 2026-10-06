@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ChevronLeft, SlidersHorizontal, Search } from "lucide-react";
+import { ChevronLeft, SlidersHorizontal, Search, Map as MapIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getMapServices } from "@/app/actions";
 
@@ -13,12 +13,28 @@ const Map = dynamic(() => import('@/components/Map'), {
 });
 
 export default function MapaInteractivo() {
+  const [allServices, setAllServices] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  
+  // Filtros
+  const [filtro, setFiltro] = useState("Todos");
+  const filtros = ["Todos", "Reparaciones", "Gasfitería", "Electricidad", "Carpintería"];
 
   useEffect(() => {
-    getMapServices().then(data => setServices(data));
+    getMapServices().then(data => {
+      setAllServices(data);
+      setServices(data);
+    });
   }, []);
+
+  useEffect(() => {
+    if (filtro === "Todos") {
+      setServices(allServices);
+    } else {
+      setServices(allServices.filter(s => s.category === filtro));
+    }
+  }, [filtro, allServices]);
 
   const selectedService = services.find(s => s.id === selectedId);
 
@@ -30,28 +46,54 @@ export default function MapaInteractivo() {
       className="flex flex-col h-screen bg-gray-50 overflow-hidden relative"
     >
       {/* Floating Header */}
-      <header className="absolute top-0 left-0 right-0 z-[100] px-4 pt-4 pb-2 pointer-events-none">
-        <div className="flex gap-2 w-full max-w-md mx-auto pointer-events-auto">
-          <Link href="/" className="bg-white flex items-center justify-center w-12 h-12 text-gray-800 shadow-[0_3px_10px_rgb(0,0,0,0.08)] rounded-full transition-colors hover:bg-gray-50 shrink-0">
-            <ChevronLeft className="w-5 h-5" />
+      <header className="absolute top-0 left-0 right-0 z-[100] px-4 pt-12 pb-2 pointer-events-none flex flex-col items-center gap-4">
+        
+        <div className="flex gap-2 w-full max-w-md pointer-events-auto">
+          <Link href="/" className="bg-white flex items-center justify-center w-14 h-14 text-gray-800 shadow-[0_3px_15px_rgb(0,0,0,0.1)] rounded-full transition-colors hover:bg-gray-50 shrink-0">
+            <ChevronLeft className="w-6 h-6" />
           </Link>
-          <div className="flex-1 bg-white shadow-[0_3px_10px_rgb(0,0,0,0.08)] rounded-full flex items-center px-4">
-            <Search className="w-4 h-4 text-gray-400 mr-2" />
-            <input 
-              type="text" 
-              placeholder="Buscar por ubicación..." 
-              className="w-full bg-transparent border-none focus:outline-none text-sm text-gray-900 font-medium"
-            />
+          <div className="flex-1 bg-white shadow-[0_3px_15px_rgb(0,0,0,0.1)] rounded-full flex flex-col justify-center items-center px-4 cursor-text">
+            <span className="font-bold text-gray-900 text-[15px]">Trabajos en tu área</span>
+            <span className="text-xs text-gray-500">Cualquier fecha • Cualquier precio</span>
           </div>
-          <button className="bg-white flex items-center justify-center w-12 h-12 text-gray-800 shadow-[0_3px_10px_rgb(0,0,0,0.08)] rounded-full transition-colors hover:bg-gray-50 shrink-0 hover:rotate-12 transition-transform">
-            <SlidersHorizontal className="w-4 h-4" />
+          <button className="bg-white flex items-center justify-center w-14 h-14 text-gray-800 shadow-[0_3px_15px_rgb(0,0,0,0.1)] rounded-full transition-colors hover:bg-gray-50 shrink-0 relative">
+            <SlidersHorizontal className="w-5 h-5" />
+            <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-black rounded-full border-2 border-white"></span>
           </button>
         </div>
+
+        {/* Pill Filters (Like Airbnb) */}
+        <div className="w-full max-w-md overflow-x-auto hide-scrollbar pointer-events-auto px-2">
+          <div className="flex gap-2">
+            {filtros.map((f) => (
+              <button
+                key={f}
+                onClick={() => setFiltro(f)}
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm ${
+                  filtro === f 
+                    ? "bg-gray-900 text-white border border-gray-900" 
+                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
       </header>
 
       {/* Mapa Interactivo */}
       <div className="flex-1 w-full h-full z-0">
         <Map services={services} selectedId={selectedId} onSelect={setSelectedId} />
+      </div>
+
+      {/* Floating Lista Button */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[90] pointer-events-auto">
+        <Link href="/buscar-trabajo" className="bg-[#222222] hover:bg-black text-white px-5 py-3 rounded-full font-bold flex items-center gap-2 shadow-[0_8px_20px_rgb(0,0,0,0.2)] transition-transform hover:scale-105">
+          <span>Lista</span>
+          <Search className="w-4 h-4" />
+        </Link>
       </div>
 
       {/* Animated Bottom Card Preview */}
@@ -76,8 +118,8 @@ export default function MapaInteractivo() {
               <button onClick={() => setSelectedId(null)} className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 shrink-0 transition-colors">
                  ✕
               </button>
-              <Link href={`/buscar-trabajo`} className="flex-1 flex justify-center items-center bg-[#222222] hover:bg-black text-white font-semibold py-3 rounded-xl transition-colors shadow-md">
-                Postular al trabajo
+              <Link href={`/servicio/${selectedService.id}`} className="flex-1 flex justify-center items-center bg-[#222222] hover:bg-black text-white font-semibold py-3 rounded-xl transition-colors shadow-md">
+                Ver detalles
               </Link>
             </div>
           </motion.div>
