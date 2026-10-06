@@ -14,8 +14,6 @@ export async function getMapServices() {
 
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // 1. Solicitar código de verificación (Magic Code)
 export async function requestLoginCode(email: string) {
   if (!email) throw new Error("El email es requerido");
@@ -47,6 +45,7 @@ export async function requestLoginCode(email: string) {
 
   // ENVÍO DE CORREO REAL CON RESEND
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_para_evitar_errores_de_build');
     await resend.emails.send({
       from: 'ServiCam <onboarding@resend.dev>', // Correo de prueba de Resend
       to: email,
