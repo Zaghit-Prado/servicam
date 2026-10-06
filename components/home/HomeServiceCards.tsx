@@ -40,8 +40,8 @@ export async function HomeServiceCards() {
       <section className="px-4 py-6 max-w-md mx-auto w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-900">Prestadores cerca de ti</h2>
-          <Link href="/prestadores" className="p-1.5 bg-gray-100 rounded-full hover:bg-gray-200">
-            <ArrowRight className="w-5 h-5 text-gray-600" />
+          <Link href="/prestadores" className="p-1.5 bg-brand-100 rounded-full hover:bg-brand-300 transition-colors">
+            <ArrowRight className="w-5 h-5 text-brand-900" />
           </Link>
         </div>
         
@@ -53,16 +53,16 @@ export async function HomeServiceCards() {
 
             return (
               <div key={prestador.id} className="snap-start min-w-[280px] flex flex-col gap-3">
-                <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-gray-200 group block">
+                <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-brand-100 group block">
                   {prestador.image ? (
                     <img src={prestador.image || undefined} alt={prestador.name || ""} className="absolute inset-0 w-full h-full object-cover z-0" />
                   ) : (
-                    <div className="absolute inset-0 z-0 bg-gradient-to-tr from-blue-600 to-cyan-500"></div>
+                    <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-500 to-brand-300"></div>
                   )}
                   <Link href={`/perfil/${prestador.id}`} className="absolute inset-0 z-10"></Link>
                   <div className="absolute top-3 right-3 z-20">
                     <button className="p-1">
-                      <Heart className="w-6 h-6 text-white stroke-[1.5px] drop-shadow-md hover:fill-red-500 hover:text-red-500 transition-colors" />
+                      <Heart className="w-6 h-6 text-white stroke-[1.5px] drop-shadow-md hover:fill-brand-500 hover:text-brand-500 transition-colors" />
                     </button>
                   </div>
                   {prestador.reviewsReceived.length > 5 && (
@@ -77,7 +77,7 @@ export async function HomeServiceCards() {
                       {prestador.skills.length > 0 ? prestador.skills[0].name : "Servicios Generales"}
                     </h3>
                     <div className="flex items-center gap-1 text-sm">
-                      <Star className="w-4 h-4 fill-gray-900 text-gray-900" />
+                      <Star className="w-4 h-4 fill-brand-900 text-brand-900" />
                       <span>{avgRating}</span>
                     </div>
                   </div>
@@ -93,19 +93,19 @@ export async function HomeServiceCards() {
       <section className="px-4 py-2 max-w-md mx-auto w-full pb-24">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-900">Trabajos recientes publicados</h2>
-          <Link href="/buscar-trabajo" className="p-1.5 bg-gray-100 rounded-full hover:bg-gray-200">
-            <ArrowRight className="w-5 h-5 text-gray-600" />
+          <Link href="/buscar-trabajo" className="p-1.5 bg-brand-100 rounded-full hover:bg-brand-300 transition-colors">
+            <ArrowRight className="w-5 h-5 text-brand-900" />
           </Link>
         </div>
         
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
           {serviciosRecientes.map((servicio) => (
             <div key={servicio.id} className="snap-start min-w-[280px] flex flex-col gap-3">
-              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-gray-200 group block">
+              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-brand-100 group block">
                 {servicio.images && servicio.images.length > 5 && servicio.images.startsWith("http") ? (
                   <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover z-0" />
                 ) : (
-                  <div className="absolute inset-0 z-0 bg-gradient-to-tr from-green-500 to-emerald-400"></div>
+                  <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>
                 )}
                 <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-10"></Link>
                 <div className="absolute top-3 right-3 z-20">
