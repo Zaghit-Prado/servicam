@@ -99,7 +99,7 @@ export async function verifyLoginCode(email: string, code: string) {
   const cookieStore = await cookies();
   cookieStore.set("userId", user.id, { httpOnly: true, secure: process.env.NODE_ENV === "production" });
 
-  redirect("/perfil");
+  return { success: true };
 }
 
 // Cerrar sesión

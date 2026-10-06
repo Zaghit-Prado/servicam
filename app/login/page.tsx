@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { requestLoginCode, verifyLoginCode } from "@/app/actions";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Login() {
@@ -30,16 +31,19 @@ export default function Login() {
     }
   };
 
+  const router = useRouter();
+
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      await verifyLoginCode(email, code);
-      // Redirection is handled in the server action
+      const res = await verifyLoginCode(email, code);
+      if (res.success) {
+        router.push("/perfil");
+      }
     } catch (err: any) {
       setError(err.message || "Código inválido");
-    } finally {
       setLoading(false);
     }
   };
