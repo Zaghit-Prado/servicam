@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-900: #1a1625; /* Colour-1: Dark Eggplant / Navy */
+  --color-brand-700: #342c5c; /* Colour-2: Deep Indigo */
+  --color-brand-500: #5b67d8; /* Colour-3: Periwinkle Blue */
+  --color-brand-300: #7aa4e1; /* Colour-4: Sky Blue */
+  --color-brand-100: #f4f7fb; /* Light background */
+}
+
 @layer utilities {
   /* Ocultar barra de desplazamiento manteniendo la funcionalidad */
   .hide-scrollbar::-webkit-scrollbar {

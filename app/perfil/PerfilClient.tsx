@@ -38,7 +38,7 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 pb-24">
         <h1 className="text-2xl font-bold mb-4">Tu Perfil</h1>
         <p className="text-gray-500 mb-8 text-center">Inicia sesión para ver tu perfil, editar tu información y gestionar tus configuraciones.</p>
-        <Link href="/login" className="w-full bg-[#E51D53] hover:bg-rose-600 text-white font-semibold py-4 rounded-xl transition-colors shadow-md text-center">
+        <Link href="/login" className="w-full bg-brand-500 hover:bg-brand-700 text-white font-semibold py-4 rounded-xl transition-colors shadow-md text-center">
           Iniciar Sesión / Registrarse
         </Link>
       </div>
@@ -58,12 +58,12 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
     >
       {/* Header */}
       <header className="px-4 py-4 flex items-center justify-between bg-white z-10 sticky top-0">
-        <Link href="/" className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
-          <ChevronLeft className="w-5 h-5 text-gray-800" />
+        <Link href="/" className="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center hover:bg-brand-300 transition-colors">
+          <ChevronLeft className="w-5 h-5 text-brand-900" />
         </Link>
         <button 
           onClick={() => setIsEditing(true)}
-          className="px-5 py-2 bg-gray-100 font-semibold rounded-full text-gray-800 hover:bg-gray-200 transition-colors"
+          className="px-5 py-2 bg-brand-100 font-semibold rounded-full text-brand-900 hover:bg-brand-300 transition-colors"
         >
           Editar
         </button>
@@ -71,18 +71,18 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
 
       <main className="px-6 max-w-md mx-auto">
         {/* Profile Card Airbnb Style */}
-        <div className="bg-white rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.12)] p-6 mt-4 flex items-center justify-between border border-gray-100">
+        <div className="bg-white rounded-3xl shadow-[0_8px_28px_rgba(0,0,0,0.12)] p-6 mt-4 flex items-center justify-between border border-brand-100">
           <div className="flex flex-col items-center w-1/2 border-r border-gray-200 pr-4">
             <div className="relative w-24 h-24 mb-3">
               {user.image ? (
                 <img src={user.image} alt={user.name} className="w-full h-full rounded-full object-cover" />
               ) : (
-                <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-                  <UserCircle className="w-12 h-12 text-gray-400" />
+                <div className="w-full h-full rounded-full bg-brand-100 flex items-center justify-center">
+                  <UserCircle className="w-12 h-12 text-brand-300" />
                 </div>
               )}
               {user.isVerified && (
-                <div className="absolute bottom-0 right-0 bg-[#E51D53] w-7 h-7 rounded-full flex items-center justify-center border-2 border-white">
+                <div className="absolute bottom-0 right-0 bg-brand-500 w-7 h-7 rounded-full flex items-center justify-center border-2 border-white">
                   <ShieldCheck className="w-4 h-4 text-white" />
                 </div>
               )}
@@ -113,37 +113,37 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
         <div className="mt-8 flex flex-col gap-5 border-b border-gray-200 pb-8">
           {user.work && (
             <div className="flex items-start gap-4">
-              <Briefcase className="w-6 h-6 text-gray-700 shrink-0 mt-0.5" />
+              <Briefcase className="w-6 h-6 text-brand-700 shrink-0 mt-0.5" />
               <p className="text-gray-800 text-[17px]">A qué me dedico: <span className="font-medium">{user.work}</span></p>
             </div>
           )}
           {user.dreamDest && (
             <div className="flex items-start gap-4">
-              <Globe className="w-6 h-6 text-gray-700 shrink-0 mt-0.5" />
+              <Globe className="w-6 h-6 text-brand-700 shrink-0 mt-0.5" />
               <p className="text-gray-800 text-[17px]">A donde siempre quise ir: <span className="font-medium">{user.dreamDest}</span></p>
             </div>
           )}
           {user.timeSpent && (
             <div className="flex items-start gap-4">
-              <Clock className="w-6 h-6 text-gray-700 shrink-0 mt-0.5" />
+              <Clock className="w-6 h-6 text-brand-700 shrink-0 mt-0.5" />
               <p className="text-gray-800 text-[17px]">A qué le dedico mucho tiempo: <span className="font-medium">{user.timeSpent}</span></p>
             </div>
           )}
           {user.pets && (
             <div className="flex items-start gap-4">
-              <Dog className="w-6 h-6 text-gray-700 shrink-0 mt-0.5" />
+              <Dog className="w-6 h-6 text-brand-700 shrink-0 mt-0.5" />
               <p className="text-gray-800 text-[17px]">Mascotas: <span className="font-medium">{user.pets}</span></p>
             </div>
           )}
           {user.languages && (
             <div className="flex items-start gap-4">
-              <Languages className="w-6 h-6 text-gray-700 shrink-0 mt-0.5" />
+              <Languages className="w-6 h-6 text-brand-700 shrink-0 mt-0.5" />
               <p className="text-gray-800 text-[17px]">Habla <span className="font-medium">{user.languages}</span></p>
             </div>
           )}
           
           <div className="flex items-start gap-4">
-            <ShieldCheck className="w-6 h-6 text-gray-700 shrink-0 mt-0.5" />
+            <ShieldCheck className="w-6 h-6 text-brand-700 shrink-0 mt-0.5" />
             <p className="text-gray-800 text-[17px] font-medium underline underline-offset-2">{user.isVerified ? "Identidad verificada" : "Identidad no verificada"}</p>
           </div>
         </div>
@@ -151,8 +151,8 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
         {/* Settings Links */}
         <div className="mt-4">
           <form action={logout}>
-            <button type="submit" className="w-full flex items-center justify-between py-4 hover:bg-gray-50 transition-colors">
-              <span className="font-medium text-gray-900 text-[17px] underline">Cerrar sesión</span>
+            <button type="submit" className="w-full flex items-center justify-between py-4 hover:bg-brand-50 transition-colors">
+              <span className="font-medium text-brand-900 text-[17px] underline">Cerrar sesión</span>
             </button>
           </form>
         </div>
@@ -169,7 +169,7 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
             className="fixed inset-0 bg-white z-[200] flex flex-col overflow-y-auto"
           >
             <header className="px-4 py-4 flex items-center justify-between sticky top-0 bg-white border-b border-gray-100 z-10">
-              <button onClick={() => setIsEditing(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <button onClick={() => setIsEditing(false)} className="p-2 hover:bg-brand-100 rounded-full transition-colors">
                 <X className="w-6 h-6 text-gray-900" />
               </button>
               <h2 className="font-bold text-lg text-gray-900">Editar perfil</h2>
@@ -183,15 +183,15 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
                   {formData.image ? (
                      <img src={formData.image} alt="Perfil" className="w-full h-full rounded-full object-cover shadow-sm" />
                   ) : (
-                     <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-                       <UserCircle className="w-16 h-16 text-gray-400" />
+                     <div className="w-full h-full rounded-full bg-brand-100 flex items-center justify-center">
+                       <UserCircle className="w-16 h-16 text-brand-300" />
                      </div>
                   )}
                   
                   {/* Photo Edit input - File upload */}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-4 py-1.5 rounded-full shadow-md border border-gray-100 flex items-center gap-2 hover:bg-gray-50 transition-colors">
-                    <Camera className="w-4 h-4 text-gray-800" />
-                    <span className="text-sm font-semibold text-gray-900">Editar</span>
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-4 py-1.5 rounded-full shadow-md border border-gray-100 flex items-center gap-2 hover:bg-brand-50 transition-colors">
+                    <Camera className="w-4 h-4 text-brand-900" />
+                    <span className="text-sm font-semibold text-brand-900">Editar</span>
                   </div>
                   
                   <input 
@@ -248,32 +248,32 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
               <div className="flex flex-col gap-6">
                 
                 {/* Inputs */}
-                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-black focus-within:ring-1 focus-within:ring-black">
+                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-colors">
                   <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1 block">Nombre</label>
                   <input type="text" className="w-full outline-none text-gray-900 font-medium" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                 </div>
 
-                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-black focus-within:ring-1 focus-within:ring-black">
+                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-colors">
                   <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1 block">A qué me dedico</label>
                   <input type="text" className="w-full outline-none text-gray-900 font-medium" placeholder="Ej: Carpintero profesional" value={formData.work} onChange={(e) => setFormData({...formData, work: e.target.value})} />
                 </div>
 
-                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-black focus-within:ring-1 focus-within:ring-black">
+                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-colors">
                   <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1 block">A dónde siempre quise ir</label>
                   <input type="text" className="w-full outline-none text-gray-900 font-medium" placeholder="Ej: Cusco" value={formData.dreamDest} onChange={(e) => setFormData({...formData, dreamDest: e.target.value})} />
                 </div>
 
-                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-black focus-within:ring-1 focus-within:ring-black">
+                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-colors">
                   <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1 block">A qué le dedico mucho tiempo</label>
                   <input type="text" className="w-full outline-none text-gray-900 font-medium" placeholder="Ej: A mi trabajo y familia" value={formData.timeSpent} onChange={(e) => setFormData({...formData, timeSpent: e.target.value})} />
                 </div>
 
-                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-black focus-within:ring-1 focus-within:ring-black">
+                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-colors">
                   <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1 block">Mascotas</label>
                   <input type="text" className="w-full outline-none text-gray-900 font-medium" placeholder="Ej: Sí, se llama Beyli y es un perro" value={formData.pets} onChange={(e) => setFormData({...formData, pets: e.target.value})} />
                 </div>
 
-                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-black focus-within:ring-1 focus-within:ring-black">
+                <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-colors">
                   <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1 block">Idiomas que hablo</label>
                   <input type="text" className="w-full outline-none text-gray-900 font-medium" placeholder="Ej: Español, Inglés" value={formData.languages} onChange={(e) => setFormData({...formData, languages: e.target.value})} />
                 </div>
@@ -284,7 +284,7 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
                 <button 
                   onClick={handleSave}
                   disabled={loading}
-                  className="w-full bg-[#222222] hover:bg-black text-white font-bold py-4 rounded-xl transition-colors disabled:opacity-50"
+                  className="w-full bg-brand-900 hover:bg-brand-700 text-white font-bold py-4 rounded-xl transition-colors disabled:opacity-50"
                 >
                   {loading ? "Guardando..." : "Listo"}
                 </button>

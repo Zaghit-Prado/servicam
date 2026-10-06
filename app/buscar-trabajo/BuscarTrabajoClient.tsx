@@ -56,7 +56,7 @@ export default function BuscarTrabajoClient({
     >
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white shadow-sm px-4 h-16 flex items-center gap-3">
-        <Link href="/" className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+        <Link href="/" className="p-2 -ml-2 text-brand-900 hover:bg-brand-100 rounded-full transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <div className="flex-1 relative">
@@ -66,12 +66,12 @@ export default function BuscarTrabajoClient({
             placeholder="Buscar trabajos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-100 rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+            className="w-full bg-brand-100/50 rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-shadow"
           />
         </div>
         <button 
           onClick={() => setIsFilterModalOpen(true)}
-          className="p-2 -mr-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-2 -mr-2 text-brand-900 hover:bg-brand-100 rounded-full transition-colors"
         >
           <SlidersHorizontal className="w-5 h-5" />
         </button>
@@ -86,8 +86,8 @@ export default function BuscarTrabajoClient({
               onClick={() => setFiltro(f)}
               className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 filtro === f 
-                  ? "bg-gray-900 text-white shadow-md" 
-                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  ? "bg-brand-900 text-white shadow-md" 
+                  : "bg-white border border-gray-200 text-gray-600 hover:bg-brand-50"
               }`}
             >
               {f}
@@ -114,10 +114,10 @@ export default function BuscarTrabajoClient({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100"
+                className="bg-white p-5 rounded-3xl shadow-sm border border-brand-100"
               >
                 <div className="flex justify-between items-start mb-3">
-                  <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+                  <div className="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-xs font-bold">
                     {servicio.category}
                   </div>
                   <div className="flex items-center gap-2">
@@ -130,16 +130,16 @@ export default function BuscarTrabajoClient({
                 
                 <div className="flex flex-col gap-2 mb-4">
                   <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <MapPin className="w-4 h-4 text-brand-500/70" />
                     <span>A calcular...</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <Clock className="w-4 h-4 text-gray-400" />
+                    <Clock className="w-4 h-4 text-brand-500/70" />
                     <span>Publicado recientemente</span>
                   </div>
                 </div>
 
-                <Link href={`/servicio/${servicio.id}`} className="w-full bg-gray-50 hover:bg-gray-100 text-gray-900 font-semibold py-3 rounded-xl flex justify-center items-center gap-2 transition-colors">
+                <Link href={`/servicio/${servicio.id}`} className="w-full bg-brand-50 hover:bg-brand-100 text-brand-900 font-semibold py-3 rounded-xl flex justify-center items-center gap-2 transition-colors">
                   Ver detalles <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
@@ -150,7 +150,7 @@ export default function BuscarTrabajoClient({
 
       {/* Floating Map Button */}
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[50]">
-        <Link href="/mapa" className="bg-[#222222] hover:bg-black text-white px-5 py-3 rounded-full font-bold flex items-center gap-2 shadow-[0_8px_20px_rgb(0,0,0,0.2)] transition-transform hover:scale-105">
+        <Link href="/mapa" className="bg-brand-900 hover:bg-brand-700 text-white px-5 py-3 rounded-full font-bold flex items-center gap-2 shadow-[0_8px_20px_rgb(0,0,0,0.2)] transition-transform hover:scale-105">
           <span>Mapa</span>
           <MapPin className="w-4 h-4" />
         </Link>
@@ -165,7 +165,7 @@ export default function BuscarTrabajoClient({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsFilterModalOpen(false)}
-              className="fixed inset-0 bg-black/40 z-[60] backdrop-blur-sm"
+              className="fixed inset-0 bg-brand-900/40 z-[60] backdrop-blur-sm"
             />
             <motion.div
               initial={{ y: "100%" }}
@@ -186,7 +186,7 @@ export default function BuscarTrabajoClient({
                       type="number" 
                       value={tempMinPrice}
                       onChange={(e) => setTempMinPrice(Number(e.target.value))}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500" 
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-brand-500" 
                     />
                   </div>
                   <div className="mt-5 text-gray-400">-</div>
@@ -196,7 +196,7 @@ export default function BuscarTrabajoClient({
                       type="number" 
                       value={tempMaxPrice}
                       onChange={(e) => setTempMaxPrice(Number(e.target.value))}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500" 
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-brand-500" 
                     />
                   </div>
                 </div>
@@ -204,7 +204,7 @@ export default function BuscarTrabajoClient({
 
               <button 
                 onClick={applyFilters}
-                className="w-full bg-[#1853db] hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors"
+                className="w-full bg-brand-500 hover:bg-brand-700 text-white font-bold py-4 rounded-xl transition-colors"
               >
                 Mostrar resultados
               </button>
