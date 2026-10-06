@@ -49,12 +49,12 @@ export default function MapaInteractivo() {
         <p className="text-sm text-gray-500 line-clamp-1 mb-6">Fuga de agua en el lavadero de la cocina.</p>
         
         <div className="flex gap-3">
-          <button className="w-12 h-12 flex items-center justify-center bg-[#222222] rounded-full text-white font-bold shrink-0">
-             N
-          </button>
-          <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 rounded-xl transition-colors">
+          <Link href="/buscar-trabajo" className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 shrink-0 transition-colors">
+             ✕
+          </Link>
+          <Link href="/perfil/carlos-mendoza" className="flex-1 flex justify-center items-center bg-[#222222] hover:bg-black text-white font-semibold py-3 rounded-xl transition-colors">
             Ver detalle
-          </button>
+          </Link>
         </div>
       </div>
 

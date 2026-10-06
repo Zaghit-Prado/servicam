@@ -42,10 +42,13 @@ export default function Map() {
       style={{ height: '100%', width: '100%', zIndex: 0 }}
       zoomControl={false}
     >
-      {/* Mapa de alta calidad de Esri (No requiere API KEY) */}
+      {/* Mapa de alta calidad de Esri (Light Gray Canvas - Estilo minimalista y moderno) */}
       <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-        attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+        attribution='&copy; Esri, HERE, Garmin, NGA, USGS'
+      />
+      <TileLayer
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
       />
       
       {/* Ubicación del usuario */}
