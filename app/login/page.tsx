@@ -21,11 +21,15 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await requestLoginCode(email);
-      // Simulamos un retraso de red
-      setTimeout(() => setStep("code"), 500);
+      const res = await requestLoginCode(email);
+      if (res?.error) {
+        setError(res.error);
+      } else {
+        // Simulamos un retraso de red
+        setTimeout(() => setStep("code"), 500);
+      }
     } catch (err: any) {
-      setError(err.message || "Ocurrió un error");
+      setError("Ocurrió un error inesperado al conectar con el servidor.");
     } finally {
       setLoading(false);
     }
@@ -39,11 +43,14 @@ export default function Login() {
     setLoading(true);
     try {
       const res = await verifyLoginCode(email, code);
-      if (res.success) {
+      if (res?.error) {
+        setError(res.error);
+      } else if (res?.success) {
         router.push("/perfil");
       }
     } catch (err: any) {
-      setError(err.message || "Código inválido");
+      setError("Error inesperado al verificar.");
+    } finally {
       setLoading(false);
     }
   };

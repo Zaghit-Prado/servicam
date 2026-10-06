@@ -16,7 +16,7 @@ import { Resend } from 'resend';
 
 // 1. Solicitar código de verificación (Magic Code)
 export async function requestLoginCode(email: string) {
-  if (!email) throw new Error("El email es requerido");
+  if (!email) return { error: "El email es requerido" };
 
   const code = Math.floor(100000 + Math.random() * 900000).toString(); // 6 dígitos
   const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
@@ -45,9 +45,9 @@ export async function requestLoginCode(email: string) {
 
   // ENVÍO DE CORREO REAL CON RESEND
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_para_evitar_errores_de_build');
-    await resend.emails.send({
-      from: 'ServiCam <onboarding@resend.dev>', // Correo de prueba de Resend
+    const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
+    const result = await resend.emails.send({
+      from: 'ServiCam <onboarding@resend.dev>',
       to: email,
       subject: `Tu código de ServiCam es ${code}`,
       html: `
@@ -66,23 +66,27 @@ export async function requestLoginCode(email: string) {
         </div>
       `
     });
+
+    if (result.error) {
+      console.error("Error de Resend:", result.error);
+      return { error: "Resend rechazó el envío (Verifica que tu correo sea el autorizado)" };
+    }
   } catch (error) {
-    console.error("Error enviando correo:", error);
-    throw new Error("No se pudo enviar el correo de verificación");
+    console.error("Excepción en Resend:", error);
+    return { error: "Error en el servidor al enviar correo" };
   }
   
-  // Como ya enviamos el correo real, no retornamos el código simulado en producción
   return { success: true };
 }
 
 // 2. Verificar el código e iniciar sesión
 export async function verifyLoginCode(email: string, code: string) {
-  if (!email || !code) throw new Error("Datos incompletos");
+  if (!email || !code) return { error: "Datos incompletos" };
 
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || user.otp !== code || !user.otpExpires || user.otpExpires < new Date()) {
-    throw new Error("Código inválido o expirado");
+    return { error: "Código inválido o expirado" };
   }
 
   // Limpiar OTP y marcar verificado
