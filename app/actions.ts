@@ -12,6 +12,10 @@ export async function getMapServices() {
   });
 }
 
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 // 1. Solicitar código de verificación (Magic Code)
 export async function requestLoginCode(email: string) {
   if (!email) throw new Error("El email es requerido");
@@ -41,13 +45,35 @@ export async function requestLoginCode(email: string) {
     });
   }
 
-  // SIMULACIÓN DE ENVÍO DE CORREO:
-  console.log(`\n\n=== CORREO SIMULADO PARA ${email} ===`);
-  console.log(`Tu código de confirmación es: ${code}`);
-  console.log(`==========================================\n\n`);
+  // ENVÍO DE CORREO REAL CON RESEND
+  try {
+    await resend.emails.send({
+      from: 'ServiCam <onboarding@resend.dev>', // Correo de prueba de Resend
+      to: email,
+      subject: `Tu código de ServiCam es ${code}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #1853db; margin-top: 0;">ServiCam</h2>
+          <h1 style="font-size: 24px; color: #333;">Confirma que eres tú</h1>
+          <p style="color: #555; font-size: 16px;">
+            Ingresa este código en la aplicación para iniciar sesión de forma segura:
+          </p>
+          <div style="background-color: #f4f4f5; padding: 20px; text-align: center; border-radius: 8px; margin: 24px 0;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #000;">${code}</span>
+          </div>
+          <p style="color: #888; font-size: 14px;">
+            Este código expirará en 10 minutos. Si no lo solicitaste, puedes ignorar este correo.
+          </p>
+        </div>
+      `
+    });
+  } catch (error) {
+    console.error("Error enviando correo:", error);
+    throw new Error("No se pudo enviar el correo de verificación");
+  }
   
-  // Retornamos el código para poder mostrarlo en la UI temporalmente (ya que no hay envío de correos real configurado)
-  return { success: true, simulatedCode: code };
+  // Como ya enviamos el correo real, no retornamos el código simulado en producción
+  return { success: true };
 }
 
 // 2. Verificar el código e iniciar sesión

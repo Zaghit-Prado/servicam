@@ -160,19 +160,6 @@ export default function Login() {
               <p className="mt-8 text-sm text-gray-500">
                 ¿No lo recibiste? <button type="button" onClick={handleRequestCode} className="text-gray-900 font-bold underline">Enviar un nuevo código</button>
               </p>
-              
-              {/* Notificación de Modo Demo para probar sin configurar un servicio de Correos real */}
-              {demoCode && (
-                <div className="mt-12 p-4 bg-blue-50 text-blue-900 rounded-xl text-sm border border-blue-200 text-left w-full shadow-sm">
-                  <div className="flex items-center gap-2 font-bold mb-2">
-                    <span className="text-xl">📩</span> Correo Simulado
-                  </div>
-                  <p>Has recibido un correo de <b>ServiCam</b>.</p>
-                  <p className="mt-2 text-center text-2xl font-mono tracking-widest font-bold bg-white py-2 rounded-lg border border-blue-100">
-                    {demoCode}
-                  </p>
-                </div>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
