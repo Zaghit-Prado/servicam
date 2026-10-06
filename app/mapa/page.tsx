@@ -21,20 +21,34 @@ export default function MapaInteractivo() {
   const [filtro, setFiltro] = useState("Todos");
   const filtros = ["Todos", "Reparaciones", "Gasfitería", "Electricidad", "Carpintería"];
 
-  useEffect(() => {
-    getMapServices().then(data => {
-      setAllServices(data);
-      setServices(data);
-    });
-  }, []);
+  // Modal de Filtros (Precio)
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [tempMinPrice, setTempMinPrice] = useState(0);
+  const [tempMaxPrice, setTempMaxPrice] = useState(1000);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
 
   useEffect(() => {
-    if (filtro === "Todos") {
-      setServices(allServices);
-    } else {
-      setServices(allServices.filter(s => s.category === filtro));
+    let filtered = allServices;
+    if (filtro !== "Todos") {
+      filtered = filtered.filter(s => s.category === filtro);
     }
-  }, [filtro, allServices]);
+    
+    // Filtrar por precio
+    filtered = filtered.filter(svc => {
+      const svcMin = Number(svc.minPrice) || 0;
+      const svcMax = Number(svc.maxPrice) || 0;
+      return (svcMin <= maxPrice && svcMax >= minPrice);
+    });
+
+    setServices(filtered);
+  }, [filtro, minPrice, maxPrice, allServices]);
+
+  const applyFilters = () => {
+    setMinPrice(tempMinPrice);
+    setMaxPrice(tempMaxPrice);
+    setIsFilterModalOpen(false);
+  };
 
   const selectedService = services.find(s => s.id === selectedId);
 
@@ -54,9 +68,12 @@ export default function MapaInteractivo() {
           </Link>
           <div className="flex-1 bg-white shadow-[0_3px_15px_rgb(0,0,0,0.1)] rounded-full flex flex-col justify-center items-center px-4 cursor-text">
             <span className="font-bold text-gray-900 text-[15px]">Trabajos en tu área</span>
-            <span className="text-xs text-gray-500">Cualquier fecha • Cualquier precio</span>
+            <span className="text-xs text-gray-500">Cualquier fecha • S/ {minPrice} - S/ {maxPrice}</span>
           </div>
-          <button className="bg-white flex items-center justify-center w-14 h-14 text-gray-800 shadow-[0_3px_15px_rgb(0,0,0,0.1)] rounded-full transition-colors hover:bg-gray-50 shrink-0 relative">
+          <button 
+            onClick={() => setIsFilterModalOpen(true)}
+            className="bg-white flex items-center justify-center w-14 h-14 text-gray-800 shadow-[0_3px_15px_rgb(0,0,0,0.1)] rounded-full transition-colors hover:bg-gray-50 shrink-0 relative"
+          >
             <SlidersHorizontal className="w-5 h-5" />
             <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-black rounded-full border-2 border-white"></span>
           </button>
@@ -123,6 +140,63 @@ export default function MapaInteractivo() {
               </Link>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Filtros en Mapa */}
+      <AnimatePresence>
+        {isFilterModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsFilterModalOpen(false)}
+              className="fixed inset-0 bg-black/40 z-[110] backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[120] p-6 pb-10 max-w-md mx-auto"
+            >
+              <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6" />
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Filtros de Búsqueda</h2>
+              
+              <div className="mb-8">
+                <label className="block text-sm font-semibold text-gray-900 mb-4">Rango de Precio Estimado (S/)</label>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <span className="text-xs text-gray-500 mb-1 block">Mínimo</span>
+                    <input 
+                      type="number" 
+                      value={tempMinPrice}
+                      onChange={(e) => setTempMinPrice(Number(e.target.value))}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500" 
+                    />
+                  </div>
+                  <div className="mt-5 text-gray-400">-</div>
+                  <div>
+                    <span className="text-xs text-gray-500 mb-1 block">Máximo</span>
+                    <input 
+                      type="number" 
+                      value={tempMaxPrice}
+                      onChange={(e) => setTempMaxPrice(Number(e.target.value))}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500" 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={applyFilters}
+                className="w-full bg-[#1853db] hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors"
+              >
+                Aplicar filtros al mapa
+              </button>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.div>
