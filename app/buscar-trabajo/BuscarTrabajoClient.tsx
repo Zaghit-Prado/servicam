@@ -104,7 +104,7 @@ export default function BuscarTrabajoClient({ initialServices }: { initialServic
                   </div>
                 </div>
 
-                <Link href={`/buscar-trabajo`} className="w-full bg-gray-50 hover:bg-gray-100 text-gray-900 font-semibold py-3 rounded-xl flex justify-center items-center gap-2 transition-colors">
+                <Link href={`/servicio/${servicio.id}`} className="w-full bg-gray-50 hover:bg-gray-100 text-gray-900 font-semibold py-3 rounded-xl flex justify-center items-center gap-2 transition-colors">
                   Ver detalles <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>

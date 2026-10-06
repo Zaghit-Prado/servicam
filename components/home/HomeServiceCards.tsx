@@ -92,14 +92,15 @@ export async function HomeServiceCards() {
                 ) : (
                   <div className="absolute inset-0 z-0 bg-gradient-to-tr from-green-500 to-emerald-400"></div>
                 )}
-                <Link href="/buscar-trabajo" className="absolute inset-0 z-10"></Link>
+                <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-10"></Link>
                 <div className="absolute top-3 right-3 z-20">
+                  {/* Este botón no lo conecto aquí al Server Action de Favoritos por simplicidad, pero se puede luego. */}
                   <button className="p-1">
                     <Heart className="w-6 h-6 text-white stroke-[1.5px] drop-shadow-md hover:fill-red-500 hover:text-red-500 transition-colors" />
                   </button>
                 </div>
               </div>
-              <Link href="/buscar-trabajo" className="block">
+              <Link href={`/servicio/${servicio.id}`} className="block">
                 <div className="flex justify-between items-start">
                   <h3 className="font-semibold text-gray-900 text-base">{servicio.title}</h3>
                 </div>

@@ -89,3 +89,33 @@ export async function publishService(formData: FormData) {
   redirect("/");
 }
 
+
+// Alternar un servicio en favoritos
+export async function toggleFavorite(serviceId: string) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Debes iniciar sesión para guardar favoritos");
+
+  // Verificar si ya está en favoritos
+  const existing = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { savedServices: { where: { id: serviceId } } }
+  });
+
+  const isFavorited = existing?.savedServices.length ? existing.savedServices.length > 0 : false;
+
+  if (isFavorited) {
+    // Quitar de favoritos
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { savedServices: { disconnect: { id: serviceId } } }
+    });
+    return { isFavorited: false };
+  } else {
+    // Añadir a favoritos
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { savedServices: { connect: { id: serviceId } } }
+    });
+    return { isFavorited: true };
+  }
+}
