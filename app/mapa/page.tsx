@@ -1,0 +1,81 @@
+"use client";
+
+import Link from "next/link";
+import { ChevronLeft, SlidersHorizontal, Navigation } from "lucide-react";
+
+export default function MapaInteractivo() {
+  return (
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden relative">
+      
+      {/* Floating Header */}
+      <header className="absolute top-0 left-0 right-0 z-50 px-4 pt-4 pb-2">
+        <div className="flex gap-2 w-full max-w-md mx-auto">
+          <Link href="/" className="bg-white flex items-center justify-center w-12 h-12 text-gray-800 shadow-[0_3px_10px_rgb(0,0,0,0.08)] rounded-full transition-colors hover:bg-gray-50 shrink-0">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <div className="flex-1 bg-white shadow-[0_3px_10px_rgb(0,0,0,0.08)] rounded-full flex items-center px-4">
+            <input 
+              type="text" 
+              placeholder="Buscar por ubicación..." 
+              className="w-full bg-transparent border-none focus:outline-none text-sm text-gray-900 font-medium"
+            />
+          </div>
+          <button className="bg-white flex items-center justify-center w-12 h-12 text-gray-800 shadow-[0_3px_10px_rgb(0,0,0,0.08)] rounded-full transition-colors hover:bg-gray-50 shrink-0">
+            <SlidersHorizontal className="w-4 h-4" />
+          </button>
+        </div>
+      </header>
+
+      {/* Mock Map Background */}
+      <div 
+        className="flex-1 bg-[#f0f3f5] flex items-center justify-center relative bg-cover bg-center"
+        style={{ backgroundImage: "url('https://cdn.pixabay.com/photo/2019/09/22/16/20/location-4496459_1280.png')", backgroundPosition: "center", backgroundSize: "cover", opacity: 0.8 }}
+      >
+        <div className="absolute inset-0 bg-white/40 mix-blend-overlay"></div>
+        
+        {/* Mock Map Pins */}
+        <div className="absolute top-[40%] left-[30%]">
+          <div className="bg-blue-600 text-white font-bold px-3 py-1.5 rounded-full text-[11px] shadow-sm transform -translate-x-1/2 -translate-y-full relative cursor-pointer">
+            S/ 120
+            <div className="absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-t-[5px] border-t-blue-600 border-r-[5px] border-r-transparent"></div>
+          </div>
+        </div>
+
+        <div className="absolute top-[60%] right-[30%]">
+          <div className="bg-[#222222] text-white font-bold px-3 py-1.5 rounded-full text-[11px] shadow-sm transform -translate-x-1/2 -translate-y-full relative cursor-pointer hover:scale-105 transition-transform">
+            S/ 80
+            <div className="absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-t-[5px] border-t-[#222222] border-r-[5px] border-r-transparent"></div>
+          </div>
+        </div>
+
+        {/* User Location */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+            <div className="w-3.5 h-3.5 bg-blue-600 rounded-full border-2 border-white shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Card Preview (Selected Service) */}
+      <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] p-6 z-50">
+        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-6"></div>
+        <div className="flex justify-between items-start mb-2">
+          <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-semibold">Gasfitería</div>
+          <span className="font-bold text-gray-900 text-base">S/ 120</span>
+        </div>
+        <h3 className="font-bold text-lg text-gray-900 mb-1">Reparación de tubería</h3>
+        <p className="text-sm text-gray-500 line-clamp-1 mb-6">Fuga de agua en el lavadero de la cocina.</p>
+        
+        <div className="flex gap-3">
+          <button className="w-12 h-12 flex items-center justify-center bg-[#222222] rounded-full text-white font-bold shrink-0">
+             N
+          </button>
+          <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 rounded-xl transition-colors">
+            Ver detalle
+          </button>
+        </div>
+      </div>
+
+    </div>
+  );
+}
