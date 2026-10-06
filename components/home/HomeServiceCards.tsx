@@ -40,7 +40,7 @@ export async function HomeServiceCards() {
               <div key={prestador.id} className="snap-start min-w-[280px] flex flex-col gap-3">
                 <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-gray-200 group block">
                   {prestador.image ? (
-                    <img src={prestador.image} alt={prestador.name} className="absolute inset-0 w-full h-full object-cover z-0" />
+                    <img src={prestador.image || undefined} alt={prestador.name} className="absolute inset-0 w-full h-full object-cover z-0" />
                   ) : (
                     <div className="absolute inset-0 z-0 bg-gradient-to-tr from-blue-600 to-cyan-500"></div>
                   )}

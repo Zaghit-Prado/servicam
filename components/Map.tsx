@@ -1,9 +1,18 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect } from 'react';
+
+// Componente para detectar clics en el fondo del mapa
+function MapEvents({ onMapClick }: { onMapClick: () => void }) {
+  useMapEvents({
+    click: () => {
+      onMapClick();
+    },
+  });
+  return null;
+}
 
 // Icono personalizado para la ubicación del usuario
 const userIcon = new L.Icon({
@@ -35,8 +44,8 @@ export default function Map({ services, selectedId, onSelect }: { services: any[
       zoom={14} 
       style={{ height: '100%', width: '100%', zIndex: 0 }}
       zoomControl={false}
-      onClick={() => onSelect(null)}
     >
+      <MapEvents onMapClick={() => onSelect(null)} />
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
         attribution='&copy; Esri, HERE, Garmin, NGA, USGS'
