@@ -18,13 +18,34 @@ export default function BuscarTrabajoClient({
   const savedSet = new Set(savedServiceIds);
   const filtros = ["Todos", "Reparaciones", "Gasfitería", "Electricidad", "Carpintería"];
 
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [tempMinPrice, setTempMinPrice] = useState(0);
+  const [tempMaxPrice, setTempMaxPrice] = useState(1000);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
+
   // Filtrar en el cliente
   const filteredServices = initialServices.filter(svc => {
     const matchFiltro = filtro === "Todos" || svc.category === filtro;
     const matchSearch = svc.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                         svc.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchFiltro && matchSearch;
+    
+    // Asumimos que los precios vienen en formato numérico o string numérico
+    const svcMin = Number(svc.minPrice) || 0;
+    const svcMax = Number(svc.maxPrice) || 0;
+    
+    // Si el trabajo está completamente fuera del rango de precio deseado, lo ocultamos
+    // (Ejemplo: si el usuario busca entre 0 y 100, y el trabajo es 150-200)
+    const matchPrice = (svcMin <= maxPrice && svcMax >= minPrice);
+
+    return matchFiltro && matchSearch && matchPrice;
   });
+
+  const applyFilters = () => {
+    setMinPrice(tempMinPrice);
+    setMaxPrice(tempMaxPrice);
+    setIsFilterModalOpen(false);
+  };
 
   return (
     <motion.div 
@@ -48,7 +69,10 @@ export default function BuscarTrabajoClient({
             className="w-full bg-gray-100 rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
           />
         </div>
-        <button className="p-2 -mr-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+        <button 
+          onClick={() => setIsFilterModalOpen(true)}
+          className="p-2 -mr-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+        >
           <SlidersHorizontal className="w-5 h-5" />
         </button>
       </header>
@@ -123,6 +147,63 @@ export default function BuscarTrabajoClient({
           )}
         </AnimatePresence>
       </main>
+
+      {/* Modal de Filtros */}
+      <AnimatePresence>
+        {isFilterModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsFilterModalOpen(false)}
+              className="fixed inset-0 bg-black/40 z-[60] backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] p-6 pb-10 max-w-md mx-auto"
+            >
+              <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6" />
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Filtros de Búsqueda</h2>
+              
+              <div className="mb-8">
+                <label className="block text-sm font-semibold text-gray-900 mb-4">Rango de Precio Estimado (S/)</label>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <span className="text-xs text-gray-500 mb-1 block">Mínimo</span>
+                    <input 
+                      type="number" 
+                      value={tempMinPrice}
+                      onChange={(e) => setTempMinPrice(Number(e.target.value))}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500" 
+                    />
+                  </div>
+                  <div className="mt-5 text-gray-400">-</div>
+                  <div>
+                    <span className="text-xs text-gray-500 mb-1 block">Máximo</span>
+                    <input 
+                      type="number" 
+                      value={tempMaxPrice}
+                      onChange={(e) => setTempMaxPrice(Number(e.target.value))}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500" 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={applyFilters}
+                className="w-full bg-[#1853db] hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors"
+              >
+                Aplicar filtros
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
