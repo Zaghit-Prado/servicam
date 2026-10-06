@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useEffect } from 'react';
 
 // Icono personalizado para la ubicación del usuario
 const userIcon = new L.Icon({
@@ -13,36 +14,29 @@ const userIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-// Pines flotantes estilo Airbnb (S/ 120, S/ 80) creados con HTML nativo de Leaflet
-const priceIcon120 = L.divIcon({
-  className: 'bg-transparent border-none',
-  html: `<div style="background-color: #2563eb; color: white; padding: 4px 10px; border-radius: 999px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); position: relative; width: max-content; display: inline-block;">
-            S/ 120
-            <div style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #2563eb;"></div>
-         </div>`,
-  iconSize: [0, 0],
-  iconAnchor: [30, 30],
-});
+// Helper para crear pines con precios
+const createPriceIcon = (price: number, isSelected: boolean) => {
+  const bgColor = isSelected ? '#222222' : '#2563eb';
+  return L.divIcon({
+    className: 'bg-transparent border-none',
+    html: `<div style="background-color: ${bgColor}; color: white; padding: 4px 10px; border-radius: 999px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); position: relative; width: max-content; display: inline-block; transition: all 0.3s ease; transform: ${isSelected ? 'scale(1.1)' : 'scale(1)'}; z-index: ${isSelected ? 100 : 1};">
+              S/ ${price}
+              <div style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid ${bgColor};"></div>
+           </div>`,
+    iconSize: [0, 0],
+    iconAnchor: [30, 30],
+  });
+};
 
-const priceIcon80 = L.divIcon({
-  className: 'bg-transparent border-none',
-  html: `<div style="background-color: #222222; color: white; padding: 4px 10px; border-radius: 999px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); position: relative; width: max-content; display: inline-block;">
-            S/ 80
-            <div style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #222222;"></div>
-         </div>`,
-  iconSize: [0, 0],
-  iconAnchor: [30, 30],
-});
-
-export default function Map() {
+export default function Map({ services, selectedId, onSelect }: { services: any[], selectedId: string | null, onSelect: (id: string | null) => void }) {
   return (
     <MapContainer 
-      center={[-12.046374, -77.042793]} // Coordenadas de Lima, Perú
+      center={[-12.046374, -77.042793]} 
       zoom={14} 
       style={{ height: '100%', width: '100%', zIndex: 0 }}
       zoomControl={false}
+      onClick={() => onSelect(null)}
     >
-      {/* Mapa de alta calidad de Esri (Light Gray Canvas - Estilo minimalista y moderno) */}
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
         attribution='&copy; Esri, HERE, Garmin, NGA, USGS'
@@ -54,10 +48,17 @@ export default function Map() {
       {/* Ubicación del usuario */}
       <Marker position={[-12.046374, -77.042793]} icon={userIcon}></Marker>
 
-      {/* Pines de Servicios Cercanos */}
-      <Marker position={[-12.051, -77.048]} icon={priceIcon120}></Marker>
-      <Marker position={[-12.042, -77.038]} icon={priceIcon80}></Marker>
-      
+      {/* Pines de Servicios Dinámicos */}
+      {services.map((svc) => (
+        <Marker 
+          key={svc.id} 
+          position={[svc.latitude, svc.longitude]} 
+          icon={createPriceIcon(svc.minPrice, selectedId === svc.id)}
+          eventHandlers={{
+            click: () => onSelect(svc.id),
+          }}
+        />
+      ))}
     </MapContainer>
   );
 }
