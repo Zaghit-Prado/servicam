@@ -47,11 +47,8 @@ export default function Map({ services, selectedId, onSelect }: { services: any[
     >
       <MapEvents onMapClick={() => onSelect(null)} />
       <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-        attribution='&copy; Esri, HERE, Garmin, NGA, USGS'
-      />
-      <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+        url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+        attribution='&copy; Google Maps'
       />
       
       {/* Ubicación del usuario */}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Camera, ImagePlus, ChevronLeft, MapPin, X } from "lucide-react";
 import { publishService } from "@/app/actions";
+import { useRouter } from "next/navigation";
 
 const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap'), { 
   ssr: false,
@@ -12,12 +13,13 @@ const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap')
 });
 
 export default function PublicarServicio() {
+  const router = useRouter();
   const [categoria, setCategoria] = useState("Reparaciones");
   const [urgency, setUrgency] = useState("NORMAL");
   const [image64, setImage64] = useState("");
-  const [isPublishing, setIsPublishing] = useState(false);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const categorias = ["Gasfitería", "Electricidad", "Carpintería", "Armado de Muebles", "Reparaciones", "Pintura"];
   const urgencias = [
@@ -34,7 +36,7 @@ export default function PublicarServicio() {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement("canvas");
-          const MAX_SIZE = 800; // Un poco más grande para problemas reales
+          const MAX_SIZE = 500; // Reducido para evitar errores 413 Payload Too Large
           let width = img.width;
           let height = img.height;
 
@@ -53,7 +55,7 @@ export default function PublicarServicio() {
           canvas.height = height;
           const ctx = canvas.getContext("2d");
           ctx?.drawImage(img, 0, 0, width, height);
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.5); // Compresión al 50%
           setImage64(dataUrl);
         };
         img.src = event.target?.result as string;
@@ -63,8 +65,17 @@ export default function PublicarServicio() {
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    // Form action is handled automatically by Next.js, but we want to show loading
-    setIsPublishing(true);
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    startTransition(async () => {
+      try {
+        await publishService(formData);
+        router.push("/");
+      } catch (err) {
+        console.error(err);
+        alert("Ocurrió un error al publicar. Es posible que tu sesión haya expirado o la imagen sea muy grande.");
+      }
+    });
   };
 
   return (
@@ -77,7 +88,7 @@ export default function PublicarServicio() {
         <h1 className="font-bold text-lg text-brand-900">Publicar un servicio</h1>
       </header>
 
-      <form action={publishService} onSubmit={handleSubmit} className="px-6 pt-6 flex flex-col gap-8 max-w-md mx-auto w-full">
+      <form onSubmit={handleSubmit} className="px-6 pt-6 flex flex-col gap-8 max-w-md mx-auto w-full">
         {/* Campos ocultos */}
         <input type="hidden" name="category" value={categoria} />
         <input type="hidden" name="urgency" value={urgency} />
@@ -213,24 +224,20 @@ export default function PublicarServicio() {
           
           <LocationPickerMap 
             onLocationChange={(lat, lng) => {
-              // The Map is a client component, but since it uses leaflet it must be loaded dynamically!
-              // Wait, I need to load LocationPickerMap with next/dynamic!
-              // I will do that at the top of the file
               setLatitude(lat);
               setLongitude(lng);
             }} 
           />
-          {/* We will need to add hidden inputs for latitude and longitude */}
         </section>
 
         {/* Footer Fixed Action Button */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 z-50 shadow-[0_-10px_20px_rgb(0,0,0,0.05)]">
           <button 
             type="submit" 
-            disabled={isPublishing || !latitude || !longitude}
+            disabled={isPending || !latitude || !longitude}
             className="w-full max-w-md mx-auto block bg-brand-500 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-brand-700 transition-colors disabled:opacity-50"
           >
-            {isPublishing ? "Publicando..." : (!latitude ? "Falta ubicación" : "Publicar Solicitud")}
+            {isPending ? "Publicando..." : (!latitude ? "Falta ubicación" : "Publicar Solicitud")}
           </button>
         </div>
       </form>

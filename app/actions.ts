@@ -162,7 +162,7 @@ export async function publishService(formData: FormData) {
     }
   });
 
-  redirect("/");
+  return { success: true };
 }
 
 
