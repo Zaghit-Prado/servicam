@@ -1,15 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, SlidersHorizontal, Navigation } from "lucide-react";
+import dynamic from "next/dynamic";
+import { ChevronLeft, SlidersHorizontal } from "lucide-react";
+
+// Carga dinámica del mapa para evitar el error "window is not defined" de Leaflet en SSR
+const Map = dynamic(() => import('@/components/Map'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500">Cargando mapa...</div>
+});
 
 export default function MapaInteractivo() {
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden relative">
       
       {/* Floating Header */}
-      <header className="absolute top-0 left-0 right-0 z-50 px-4 pt-4 pb-2">
-        <div className="flex gap-2 w-full max-w-md mx-auto">
+      <header className="absolute top-0 left-0 right-0 z-[100] px-4 pt-4 pb-2 pointer-events-none">
+        <div className="flex gap-2 w-full max-w-md mx-auto pointer-events-auto">
           <Link href="/" className="bg-white flex items-center justify-center w-12 h-12 text-gray-800 shadow-[0_3px_10px_rgb(0,0,0,0.08)] rounded-full transition-colors hover:bg-gray-50 shrink-0">
             <ChevronLeft className="w-5 h-5" />
           </Link>
@@ -26,38 +33,13 @@ export default function MapaInteractivo() {
         </div>
       </header>
 
-      {/* Mock Map Background */}
-      <div 
-        className="flex-1 bg-[#f0f3f5] flex items-center justify-center relative bg-cover bg-center"
-        style={{ backgroundImage: "url('https://cdn.pixabay.com/photo/2019/09/22/16/20/location-4496459_1280.png')", backgroundPosition: "center", backgroundSize: "cover", opacity: 0.8 }}
-      >
-        <div className="absolute inset-0 bg-white/40 mix-blend-overlay"></div>
-        
-        {/* Mock Map Pins */}
-        <div className="absolute top-[40%] left-[30%]">
-          <div className="bg-blue-600 text-white font-bold px-3 py-1.5 rounded-full text-[11px] shadow-sm transform -translate-x-1/2 -translate-y-full relative cursor-pointer">
-            S/ 120
-            <div className="absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-t-[5px] border-t-blue-600 border-r-[5px] border-r-transparent"></div>
-          </div>
-        </div>
-
-        <div className="absolute top-[60%] right-[30%]">
-          <div className="bg-[#222222] text-white font-bold px-3 py-1.5 rounded-full text-[11px] shadow-sm transform -translate-x-1/2 -translate-y-full relative cursor-pointer hover:scale-105 transition-transform">
-            S/ 80
-            <div className="absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-t-[5px] border-t-[#222222] border-r-[5px] border-r-transparent"></div>
-          </div>
-        </div>
-
-        {/* User Location */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-            <div className="w-3.5 h-3.5 bg-blue-600 rounded-full border-2 border-white shadow-sm"></div>
-          </div>
-        </div>
+      {/* Mapa Interactivo Real (React Leaflet) */}
+      <div className="flex-1 w-full h-full z-0">
+        <Map />
       </div>
 
       {/* Bottom Card Preview (Selected Service) */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] p-6 z-50">
+      <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] p-6 z-[100]">
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-6"></div>
         <div className="flex justify-between items-start mb-2">
           <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-semibold">Gasfitería</div>
