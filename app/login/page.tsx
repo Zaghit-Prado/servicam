@@ -20,12 +20,9 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const res = await requestLoginCode(email);
-      if (res?.simulatedCode) {
-        setDemoCode(res.simulatedCode);
-        // Simulamos un retraso de red
-        setTimeout(() => setStep("code"), 500);
-      }
+      await requestLoginCode(email);
+      // Simulamos un retraso de red
+      setTimeout(() => setStep("code"), 500);
     } catch (err: any) {
       setError(err.message || "Ocurrió un error");
     } finally {
