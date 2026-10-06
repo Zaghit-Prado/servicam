@@ -179,7 +179,7 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
             <main className="flex-1 p-6 max-w-md mx-auto w-full">
               
               <div className="flex flex-col items-center mb-8">
-                <div className="relative w-32 h-32 mb-4 group cursor-pointer">
+                <label className="relative w-32 h-32 mb-4 group cursor-pointer block">
                   {formData.image ? (
                      <img src={formData.image} alt="Perfil" className="w-full h-full rounded-full object-cover shadow-sm" />
                   ) : (
@@ -187,20 +187,55 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
                        <UserCircle className="w-16 h-16 text-gray-400" />
                      </div>
                   )}
-                  {/* Photo Edit input - For demo, we just show a link input */}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-4 py-1.5 rounded-full shadow-md border border-gray-100 flex items-center gap-2">
+                  
+                  {/* Photo Edit input - File upload */}
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-4 py-1.5 rounded-full shadow-md border border-gray-100 flex items-center gap-2 hover:bg-gray-50 transition-colors">
                     <Camera className="w-4 h-4 text-gray-800" />
                     <span className="text-sm font-semibold text-gray-900">Editar</span>
                   </div>
-                </div>
-                
-                <input 
-                  type="text" 
-                  placeholder="URL de la imagen (Ej: https://...)" 
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  className="w-full text-center text-sm text-gray-500 bg-transparent border-none outline-none focus:ring-0 mt-4"
-                />
+                  
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const img = new Image();
+                          img.onload = () => {
+                            // Comprimir la imagen usando un canvas (max 400x400)
+                            const canvas = document.createElement("canvas");
+                            const MAX_SIZE = 400;
+                            let width = img.width;
+                            let height = img.height;
+
+                            if (width > height) {
+                              if (width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                              }
+                            } else {
+                              if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                              }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext("2d");
+                            ctx?.drawImage(img, 0, 0, width, height);
+                            const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+                            setFormData({...formData, image: dataUrl});
+                          };
+                          img.src = event.target?.result as string;
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
               </div>
 
               <div className="mb-8">
