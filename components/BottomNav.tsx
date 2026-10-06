@@ -3,9 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, Heart, UserCircle, MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getCurrentUser } from "@/app/actions";
 
 export function BottomNav() {
   const pathname = usePathname();
+  const [userImage, setUserImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    getCurrentUser().then(user => {
+      if (user?.image) setUserImage(user.image);
+    });
+  }, []);
 
   // No mostrar en la vista del mapa para que el mapa ocupe todo
   if (pathname === "/mapa") return null;
@@ -25,8 +34,12 @@ export function BottomNav() {
           <Heart className="w-6 h-6 mb-1" />
           <span className="text-[10px] font-medium">Favoritos</span>
         </Link>
-        <Link href="/perfil" className={`flex flex-col items-center p-2 ${pathname === "/perfil" ? "text-red-500" : "text-gray-500 hover:text-gray-900"}`}>
-          <UserCircle className="w-6 h-6 mb-1" />
+        <Link href="/perfil" className={`flex flex-col items-center p-2 ${pathname.startsWith("/perfil") ? "text-red-500" : "text-gray-500 hover:text-gray-900"}`}>
+          {userImage ? (
+            <img src={userImage} alt="Perfil" className="w-6 h-6 rounded-full mb-1 object-cover border border-gray-200" />
+          ) : (
+            <UserCircle className="w-6 h-6 mb-1" />
+          )}
           <span className="text-[10px] font-medium">Perfil</span>
         </Link>
       </div>

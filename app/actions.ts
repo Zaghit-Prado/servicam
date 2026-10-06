@@ -59,3 +59,33 @@ export async function getCurrentUser() {
   });
 }
 
+// Publicar un nuevo servicio
+export async function publishService(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Debes iniciar sesión para publicar un servicio");
+
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const category = formData.get("category") as string;
+  const minPrice = Number(formData.get("minPrice"));
+  const maxPrice = Number(formData.get("maxPrice"));
+
+  // Crear servicio en Prisma
+  await prisma.serviceRequest.create({
+    data: {
+      title: title || "Servicio solicitado",
+      description,
+      category: category || "Reparaciones",
+      minPrice,
+      maxPrice,
+      clientId: user.id,
+      // Coordenadas aleatorias cerca del centro de la ciudad para simular
+      latitude: -12.046 + (Math.random() - 0.5) * 0.05,
+      longitude: -77.042 + (Math.random() - 0.5) * 0.05,
+      images: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=600&q=80",
+    }
+  });
+
+  redirect("/");
+}
+

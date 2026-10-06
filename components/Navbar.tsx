@@ -20,9 +20,7 @@ export function Navbar() {
           <Link href="/" className="font-bold text-xl tracking-tight text-gray-900">
             Servi<span className="text-blue-600">Cam</span>
           </Link>
-          <button className="p-2 -mr-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
-            <UserCircle className="w-6 h-6" />
-          </button>
+          <div className="w-10 h-10"></div>
         </div>
       </header>
 
