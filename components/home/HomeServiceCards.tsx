@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star, ArrowRight } from "lucide-react";
+import { Heart, Star, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/app/actions";
 import FavoriteButton from "@/app/servicio/[id]/FavoriteButton";
