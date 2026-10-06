@@ -12,7 +12,7 @@ export async function getMapServices() {
   });
 }
 
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 // 1. Solicitar código de verificación (Magic Code)
 export async function requestLoginCode(email: string) {
@@ -43,11 +43,18 @@ export async function requestLoginCode(email: string) {
     });
   }
 
-  // ENVÍO DE CORREO REAL CON RESEND
+  // ENVÍO DE CORREO REAL CON NODEMAILER (SMTP)
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
-    const result = await resend.emails.send({
-      from: 'ServiCam <onboarding@resend.dev>',
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // O 'hotmail', etc.
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"ServiCam" <${process.env.SMTP_USER}>`,
       to: email,
       subject: `Tu código de ServiCam es ${code}`,
       html: `
@@ -67,13 +74,9 @@ export async function requestLoginCode(email: string) {
       `
     });
 
-    if (result.error) {
-      console.error("Error de Resend:", result.error);
-      return { error: "Resend rechazó el envío (Verifica que tu correo sea el autorizado)" };
-    }
   } catch (error) {
-    console.error("Excepción en Resend:", error);
-    return { error: "Error en el servidor al enviar correo" };
+    console.error("Excepción en Nodemailer:", error);
+    return { error: "Error enviando correo. Verifica las credenciales SMTP en Vercel." };
   }
   
   return { success: true };
