@@ -102,7 +102,7 @@ export async function HomeServiceCards() {
           {serviciosRecientes.map((servicio) => (
             <div key={servicio.id} className="snap-start min-w-[280px] flex flex-col gap-3">
               <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-brand-100 group block">
-                {servicio.images && servicio.images.length > 5 && servicio.images.startsWith("http") ? (
+                {servicio.images && servicio.images.length > 5 && (servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? (
                   <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover z-0" />
                 ) : (
                   <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>

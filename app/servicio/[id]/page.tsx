@@ -41,7 +41,7 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
       {/* Imagen (simulada o real) */}
       <div className="relative w-full aspect-square max-w-md mx-auto bg-gray-200">
         <img 
-          src={servicio.images.startsWith("http") ? servicio.images : "https://images.unsplash.com/photo-1581092160562-40aa08e78837"} 
+          src={(servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? servicio.images : "https://images.unsplash.com/photo-1581092160562-40aa08e78837"} 
           alt={servicio.title}
           className="absolute inset-0 w-full h-full object-cover"
         />

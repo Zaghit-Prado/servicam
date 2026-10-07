@@ -37,6 +37,8 @@ const createPriceIcon = (price: number, isSelected: boolean) => {
   });
 };
 
+import { Fragment } from 'react';
+
 export default function Map({ services, selectedId, onSelect }: { services: any[], selectedId: string | null, onSelect: (id: string | null) => void }) {
   return (
     <MapContainer 
@@ -56,7 +58,7 @@ export default function Map({ services, selectedId, onSelect }: { services: any[
 
       {/* Pines de Servicios Dinámicos con Área Aproximada (Círculo) */}
       {services.map((svc) => (
-        <div key={svc.id}>
+        <Fragment key={svc.id}>
           {/* Círculo de privacidad */}
           <Circle 
             center={[svc.latitude, svc.longitude]} 
@@ -74,7 +76,7 @@ export default function Map({ services, selectedId, onSelect }: { services: any[
               click: () => onSelect(svc.id),
             }}
           />
-        </div>
+        </Fragment>
       ))}
     </MapContainer>
   );
