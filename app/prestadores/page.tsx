@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { ChevronLeft, Star, MapPin, CheckCircle, MessageCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/app/actions";
 
 export default async function PrestadoresRecomendados() {
+  const currentUser = await getCurrentUser();
   const providers = await prisma.user.findMany({
     where: { role: "PROVIDER" },
     include: {
@@ -92,13 +94,21 @@ export default async function PrestadoresRecomendados() {
                     </div>
 
                     <div className="flex gap-3">
-                      {/* Por ahora no tenemos perfil público individual, pero lo dejamos como placeholder */}
-                      <button className="flex-1 bg-white border border-gray-200 text-gray-400 font-semibold py-3 rounded-xl cursor-not-allowed">
-                        Ver Perfil
-                      </button>
-                      <button className="flex-1 bg-brand-500 hover:bg-brand-700 text-white font-semibold py-3 rounded-xl flex justify-center items-center gap-2 transition-colors">
-                        <MessageCircle className="w-4 h-4" /> Contactar
-                      </button>
+                      {currentUser?.id === provider.id ? (
+                        <Link href="/perfil" className="flex-1 bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-900 font-bold py-3 rounded-xl transition-colors flex justify-center items-center">
+                          Ver mi propio perfil
+                        </Link>
+                      ) : (
+                        <>
+                          {/* Por ahora no tenemos perfil público individual, pero lo dejamos como placeholder */}
+                          <button className="flex-1 bg-white border border-gray-200 text-gray-400 font-semibold py-3 rounded-xl cursor-not-allowed">
+                            Ver Perfil
+                          </button>
+                          <button className="flex-1 bg-brand-500 hover:bg-brand-700 text-white font-semibold py-3 rounded-xl flex justify-center items-center gap-2 transition-colors">
+                            <MessageCircle className="w-4 h-4" /> Contactar
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
