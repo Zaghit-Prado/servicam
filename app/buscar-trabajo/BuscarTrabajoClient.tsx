@@ -117,11 +117,18 @@ export default function BuscarTrabajoClient({
                 className="bg-white p-5 rounded-3xl shadow-sm border border-brand-100"
               >
                 <div className="flex justify-between items-start mb-3">
-                  <div className="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-xs font-bold">
-                    {servicio.category}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-xs font-bold">
+                      {servicio.category}
+                    </div>
+                    {(servicio as any).matchScore > 0 && (
+                      <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-green-200">
+                        ⭐ Recomendado para ti
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-gray-900">S/ {servicio.minPrice} - {servicio.maxPrice}</span>
+                  <div className="flex items-center gap-2 pl-2">
+                    <span className="font-bold text-gray-900 whitespace-nowrap">S/ {servicio.minPrice} - {servicio.maxPrice}</span>
                     <FavoriteButton serviceId={servicio.id} initialFavorited={savedSet.has(servicio.id)} variant="dark-card" />
                   </div>
                 </div>
