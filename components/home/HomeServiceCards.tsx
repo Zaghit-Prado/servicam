@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Heart, Star, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/app/actions";
-import FavoriteButton from "@/app/servicio/[id]/FavoriteButton";
 
 export async function HomeServiceCards() {
   const user = await getCurrentUser();
@@ -25,13 +24,13 @@ export async function HomeServiceCards() {
       skills: true,
       reviewsReceived: true,
     },
-    take: 4,
+    take: 6,
   });
 
   // Fetch trabajos recientes (servicios) limitados para la primera sección
   const serviciosRecientes = await prisma.serviceRequest.findMany({
     orderBy: { createdAt: 'desc' },
-    take: 4,
+    take: 6,
   });
 
   // Fetch todos los servicios para agrupar
@@ -60,47 +59,25 @@ export async function HomeServiceCards() {
           </Link>
         </div>
         
-        <div className="flex gap-4 overflow-x-auto pb-6 snap-x hide-scrollbar">
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
           {prestadores.map((prestador) => {
-            const avgRating = prestador.reviewsReceived.length > 0
-              ? (prestador.reviewsReceived.reduce((acc, rev) => acc + rev.rating, 0) / prestador.reviewsReceived.length).toFixed(1)
-              : "Nuevo";
-
             return (
-              <div key={prestador.id} className="snap-start min-w-[280px] w-[280px] sm:min-w-[300px] flex flex-col gap-3 group">
-                <div className="relative aspect-[4/4] sm:aspect-[4/3] w-full rounded-[24px] overflow-hidden bg-gray-100">
-                  {prestador.image ? (
-                    <img src={prestador.image || undefined} alt={prestador.name || ""} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-tr from-brand-500 to-brand-300"></div>
-                  )}
-                  <Link href={`/perfil/${prestador.id}`} className="absolute inset-0 z-10"></Link>
-                  
-                  <div className="absolute top-4 right-4 z-20">
-                    <button className="p-0 hover:scale-110 transition-transform">
-                      <Heart className="w-[26px] h-[26px] text-white stroke-[2px] drop-shadow-md hover:fill-red-500 hover:text-red-500 transition-colors" />
-                    </button>
-                  </div>
-                  
-                  {prestador.reviewsReceived.length > 0 && (
-                    <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm pointer-events-none">
-                      <p className="text-[13px] font-bold text-gray-900 leading-tight">Favorito entre<br/>clientes</p>
-                    </div>
-                  )}
-                </div>
+              <div key={prestador.id} className="snap-start min-w-[155px] w-[155px] sm:min-w-[170px] sm:w-[170px] relative aspect-square rounded-[32px] overflow-hidden group shadow-sm border border-gray-100 bg-gray-100">
+                {prestador.image ? (
+                  <img src={prestador.image || undefined} alt={prestador.name || ""} className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105" />
+                ) : (
+                  <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-500 to-brand-300"></div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none"></div>
                 
-                <Link href={`/perfil/${prestador.id}`} className="block px-1">
-                  <div className="flex justify-between items-start gap-2">
-                    <h3 className="font-medium text-[16px] text-gray-900 leading-snug line-clamp-1">
-                      {prestador.skills.length > 0 ? prestador.skills[0].name : "Servicios Generales"}
-                    </h3>
-                    <div className="flex items-center gap-1 text-[15px] shrink-0 mt-0.5">
-                      <Star className="w-3.5 h-3.5 fill-gray-900 text-gray-900" />
-                      <span className="text-gray-800">{avgRating}</span>
-                    </div>
-                  </div>
-                  <p className="text-gray-500 text-[15px] mt-0.5 line-clamp-1 text-ellipsis">{prestador.name}</p>
-                </Link>
+                <Link href={`/perfil/${prestador.id}`} className="absolute inset-0 z-20"></Link>
+                
+                <div className="absolute bottom-4 left-3 right-3 z-20 text-white text-center flex flex-col justify-end items-center h-full pointer-events-none">
+                  <h3 className="font-bold text-[17px] drop-shadow-md leading-tight line-clamp-2">
+                    {prestador.skills.length > 0 ? prestador.skills[0].name : "Servicios"}
+                  </h3>
+                  <p className="text-white/80 text-[12px] mt-1 line-clamp-1">{prestador.name}</p>
+                </div>
               </div>
             );
           })}
@@ -116,28 +93,24 @@ export async function HomeServiceCards() {
           </Link>
         </div>
         
-        <div className="flex gap-4 overflow-x-auto pb-6 snap-x hide-scrollbar">
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
           {serviciosRecientes.map((servicio) => (
-            <div key={servicio.id} className="snap-start min-w-[280px] w-[280px] sm:min-w-[300px] flex flex-col gap-3 group">
-              <div className="relative aspect-[4/4] sm:aspect-[4/3] w-full rounded-[24px] overflow-hidden bg-gray-100">
-                {servicio.images && servicio.images.length > 5 && (servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? (
-                  <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>
-                )}
-                <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-10"></Link>
-                
-                <div className="absolute top-4 right-4 z-20">
-                  <FavoriteButton serviceId={servicio.id} initialFavorited={savedServiceIds.has(servicio.id)} variant="card" />
+            <div key={servicio.id} className="snap-start min-w-[155px] w-[155px] sm:min-w-[170px] sm:w-[170px] relative aspect-square rounded-[32px] overflow-hidden group shadow-sm border border-gray-100 bg-gray-100">
+              {servicio.images && servicio.images.length > 5 && (servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? (
+                <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105" />
+              ) : (
+                <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none"></div>
+              
+              <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-20"></Link>
+              
+              <div className="absolute bottom-4 left-3 right-3 z-20 text-white text-center flex flex-col justify-end items-center h-full pointer-events-none">
+                <h3 className="font-bold text-[16px] drop-shadow-md leading-tight line-clamp-2 mb-2">{servicio.title}</h3>
+                <div className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg inline-block border border-white/20">
+                  <span className="font-bold text-[11px] drop-shadow-sm">S/ {servicio.minPrice}</span>
                 </div>
               </div>
-              
-              <Link href={`/servicio/${servicio.id}`} className="block px-1">
-                <div className="flex justify-between items-start gap-2">
-                  <h3 className="font-medium text-[16px] text-gray-900 leading-snug line-clamp-1">{servicio.title}</h3>
-                </div>
-                <p className="text-gray-500 text-[15px] mt-0.5 line-clamp-1">S/ {servicio.minPrice} - S/ {servicio.maxPrice} • Presupuesto</p>
-              </Link>
             </div>
           ))}
         </div>
@@ -181,48 +154,35 @@ export async function HomeServiceCards() {
           const shortLocation = location.split(",")[0] || "Otras zonas";
           
           return (
-            <section key={location} className="px-4 py-4 max-w-md mx-auto w-full pb-8">
+            <section key={location} className="px-4 py-2 max-w-md mx-auto w-full pb-8">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Alojamientos populares en {shortLocation}</h2>
+                <h2 className="text-xl font-bold text-gray-900">Servicios activos en {shortLocation}</h2>
                 <Link href="/buscar-trabajo" className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
                   <ArrowRight className="w-4 h-4 text-gray-900" />
                 </Link>
               </div>
               
-              <div className="flex gap-4 overflow-x-auto pb-6 snap-x hide-scrollbar">
+              <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
                 {groupServices
                   // Shuffle services within group
                   .sort(() => Math.random() - 0.5)
                   .map((servicio: any) => (
-                  <div key={servicio.id} className="snap-start min-w-[280px] w-[280px] sm:min-w-[300px] flex flex-col gap-3 group">
-                    <div className="relative aspect-[4/4] sm:aspect-[4/3] w-full rounded-[24px] overflow-hidden bg-gray-100">
-                      {servicio.images && servicio.images.length > 5 && (servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? (
-                        <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>
-                      )}
-                      <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-10"></Link>
-                      
-                      <div className="absolute top-4 right-4 z-20">
-                        <FavoriteButton serviceId={servicio.id} initialFavorited={savedServiceIds.has(servicio.id)} variant="card" />
-                      </div>
-                      
-                      {/* Simulación del "Favorito entre huéspedes" de Airbnb */}
-                      <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm pointer-events-none">
-                        <p className="text-[13px] font-bold text-gray-900 leading-tight">Favorito entre<br/>clientes</p>
+                  <div key={servicio.id} className="snap-start min-w-[155px] w-[155px] sm:min-w-[170px] sm:w-[170px] relative aspect-square rounded-[32px] overflow-hidden group shadow-sm border border-gray-100 bg-gray-100">
+                    {servicio.images && servicio.images.length > 5 && (servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? (
+                      <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105" />
+                    ) : (
+                      <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none"></div>
+                    
+                    <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-20"></Link>
+                    
+                    <div className="absolute bottom-4 left-3 right-3 z-20 text-white text-center flex flex-col justify-end items-center h-full pointer-events-none">
+                      <h3 className="font-bold text-[16px] drop-shadow-md leading-tight line-clamp-2 mb-2">{servicio.title}</h3>
+                      <div className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg inline-block border border-white/20">
+                        <span className="font-bold text-[11px] drop-shadow-sm">S/ {servicio.minPrice}</span>
                       </div>
                     </div>
-                    
-                    <Link href={`/servicio/${servicio.id}`} className="block px-1">
-                      <div className="flex justify-between items-start gap-2">
-                        <h3 className="font-medium text-[16px] text-gray-900 leading-snug line-clamp-1">{servicio.title}</h3>
-                        <div className="flex items-center gap-1 text-[15px] shrink-0 mt-0.5">
-                          <Star className="w-3.5 h-3.5 fill-gray-900 text-gray-900" />
-                          <span className="text-gray-800">4.95</span>
-                        </div>
-                      </div>
-                      <p className="text-gray-500 text-[15px] mt-0.5 line-clamp-1">S/ {servicio.minPrice} - S/ {servicio.maxPrice} • Presupuesto</p>
-                    </Link>
                   </div>
                 ))}
               </div>
