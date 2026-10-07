@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { requestLoginCode, verifyLoginCode, mockGoogleLogin } from "@/app/actions";
+import { requestLoginCode, verifyLoginCode } from "@/app/actions";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -120,7 +121,7 @@ export default function Login() {
 
               <button 
                 type="button"
-                onClick={() => setStep("google")}
+                onClick={() => signIn("google")}
                 className="w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-gray-400 text-gray-900 font-semibold py-4 rounded-xl transition-colors mb-4"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -172,64 +173,6 @@ export default function Login() {
               <p className="mt-8 text-sm text-gray-500">
                 ¿No lo recibiste? <button type="button" onClick={handleRequestCode} className="text-gray-900 font-bold underline">Enviar un nuevo código</button>
               </p>
-            </motion.div>
-          ) : step === "google" ? (
-            <motion.div 
-              key="google-step"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="w-full flex flex-col items-center"
-            >
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Selecciona una cuenta
-              </h1>
-              <p className="text-gray-500 mb-8 text-center">
-                Para ir a ServiCam (Entorno de pruebas)
-              </p>
-
-              <div className="w-full flex flex-col gap-3">
-                <button 
-                  onClick={async () => {
-                    setLoading(true);
-                    await mockGoogleLogin("luis@gmail.com", "Luis Pérez");
-                    router.push("/");
-                  }}
-                  className="w-full flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-left"
-                >
-                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg">
-                    L
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Luis Pérez</p>
-                    <p className="text-sm text-gray-500">luis@gmail.com</p>
-                  </div>
-                </button>
-
-                <button 
-                  onClick={async () => {
-                    setLoading(true);
-                    await mockGoogleLogin("zaghit@gmail.com", "Zaghit Aaron");
-                    router.push("/");
-                  }}
-                  className="w-full flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-left"
-                >
-                  <div className="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-lg">
-                    Z
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Zaghit Aaron</p>
-                    <p className="text-sm text-gray-500">zaghit@gmail.com</p>
-                  </div>
-                </button>
-              </div>
-
-              <button 
-                onClick={() => setStep("email")}
-                className="mt-6 text-gray-500 font-medium hover:text-gray-900 transition-colors"
-              >
-                Volver
-              </button>
             </motion.div>
           ) : null}
         </AnimatePresence>
