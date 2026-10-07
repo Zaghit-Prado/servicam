@@ -188,20 +188,41 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
 
         {/* Información del Prestador */}
         {user.role === "PROVIDER" && (
-          <div className="mt-8 border-t border-brand-100 pt-6">
-            <h3 className="font-bold text-xl text-brand-900 mb-3">Sobre mi trabajo</h3>
-            {user.bio ? (
-              <p className="text-gray-700 text-[17px] leading-relaxed mb-4">{user.bio}</p>
-            ) : (
-              <p className="text-gray-400 text-sm italic mb-4">Sin descripción profesional.</p>
-            )}
-            
-            <div className="flex flex-wrap gap-2">
-              {user.skills?.map((s: any) => (
-                <span key={s.id} className="bg-brand-50 text-brand-700 px-4 py-1.5 rounded-full text-sm font-bold border border-brand-100">
-                  {s.name}
-                </span>
-              ))}
+          <div className="mt-8">
+            <div className="bg-gradient-to-br from-brand-50 to-white border border-brand-100 rounded-3xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Briefcase className="w-24 h-24 text-brand-500 transform rotate-12" />
+              </div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-brand-100 p-2.5 rounded-xl text-brand-600">
+                    <Briefcase className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-xl text-brand-900">Perfil Profesional</h3>
+                </div>
+
+                {user.bio ? (
+                  <div className="relative">
+                    <span className="absolute -top-3 -left-2 text-4xl text-brand-200 font-serif">"</span>
+                    <p className="text-gray-700 text-[16px] leading-relaxed mb-6 pl-4 relative z-10 italic">
+                      {user.bio}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-sm italic mb-6">Sin descripción profesional.</p>
+                )}
+                
+                <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Especialidades</h4>
+                <div className="flex flex-wrap gap-2">
+                  {user.skills?.map((s: any) => (
+                    <span key={s.id} className="bg-white text-brand-700 px-4 py-2 rounded-xl text-sm font-bold border border-brand-100 shadow-sm flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-brand-500"></span>
+                      {s.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
