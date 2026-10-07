@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, MapPin, Clock, Star, Heart, CheckCircle2 } from "lucide-react";
 import FavoriteButton from "./FavoriteButton";
+import ApplyButton from "./ApplyButton";
 import { getCurrentUser } from "@/app/actions";
 import ServiceLocationWrapper from "@/components/ServiceLocationWrapper";
 
@@ -18,13 +19,18 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
 
   const user = await getCurrentUser();
   let isFavorited = false;
+  let hasApplied = false;
   
   if (user) {
     const existing = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { savedServices: { where: { id } } }
+      select: { 
+        savedServices: { where: { id } },
+        applications: { where: { serviceId: id } }
+      }
     });
     isFavorited = existing?.savedServices?.length ? existing.savedServices.length > 0 : false;
+    hasApplied = existing?.applications?.length ? existing.applications.length > 0 : false;
   }
 
   // RECOMENDACIÓN DE PRESTADORES (SOLO PARA EL CLIENTE QUE PUBLICÓ)
@@ -202,9 +208,7 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
               Conviértete en Prestador
             </Link>
           ) : (
-            <Link href={`/chat/${servicio.clientId}`} className="flex-1 bg-brand-900 text-white text-center font-bold text-lg py-4 rounded-2xl shadow-lg hover:bg-brand-700 transition-colors">
-              Postular a este trabajo
-            </Link>
+            <ApplyButton serviceId={servicio.id} hasApplied={hasApplied} clientId={servicio.clientId} />
           )}
         </div>
       </div>

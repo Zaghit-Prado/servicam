@@ -16,6 +16,9 @@ export default async function MiPerfilPage() {
       servicesDone: true,
       reviewsReceived: true,
       skills: true,
+      applications: {
+        include: { service: true }
+      }
     }
   });
 

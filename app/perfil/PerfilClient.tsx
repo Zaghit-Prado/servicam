@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   UserCircle, Settings, HelpCircle, LogOut, ChevronRight, ChevronLeft, ShieldCheck,
-  Briefcase, Globe, Clock, Dog, Languages, MapPin, X, Camera
+  Briefcase, Globe, Clock, Dog, Languages, MapPin, X, Camera, CheckCircle
 } from "lucide-react";
 import Link from "next/link";
 import { logout } from "@/app/actions";
@@ -226,6 +226,78 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
             </div>
           </div>
         )}
+
+        {/* HISTORIAL DE ACTIVIDAD */}
+        <div className="mt-10 border-t border-brand-100 pt-6">
+          <h3 className="font-bold text-xl text-brand-900 mb-6">Mi Actividad</h3>
+          
+          <div className="flex flex-col gap-6">
+            
+            {/* Trabajos Postulados (Prestador) */}
+            {user.role === "PROVIDER" && (
+              <div>
+                <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-brand-500" /> Postulaciones Activas
+                </h4>
+                {user.applications?.length > 0 ? (
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                    {user.applications.map((app: any) => (
+                      <Link key={app.id} href={`/servicio/${app.serviceId}`} className="min-w-[200px] p-3 rounded-2xl border border-brand-100 bg-white shadow-sm flex flex-col gap-1 hover:border-brand-300 transition-colors">
+                        <span className="text-xs font-bold text-brand-600 bg-brand-50 self-start px-2 py-0.5 rounded-full">{app.status}</span>
+                        <span className="font-semibold text-gray-900 line-clamp-1">{app.service.title}</span>
+                        <span className="text-xs text-gray-500">hace un momento</span>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic bg-gray-50 p-4 rounded-xl">No tienes postulaciones activas.</p>
+                )}
+              </div>
+            )}
+
+            {/* Trabajos Concluidos (Prestador) */}
+            {user.role === "PROVIDER" && (
+              <div>
+                <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" /> Trabajos Concluidos
+                </h4>
+                {user.servicesDone?.length > 0 ? (
+                  <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                    {user.servicesDone.map((svc: any) => (
+                      <div key={svc.id} className="min-w-[200px] p-3 rounded-2xl border border-gray-100 bg-white shadow-sm flex flex-col gap-1 opacity-80">
+                        <span className="font-semibold text-gray-900 line-clamp-1">{svc.title}</span>
+                        <span className="text-xs text-gray-500">{svc.category}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic bg-gray-50 p-4 rounded-xl">Aún no has concluido trabajos.</p>
+                )}
+              </div>
+            )}
+
+            {/* Publicaciones Realizadas (Cliente) */}
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-brand-500" /> Mis Publicaciones
+              </h4>
+              {user.servicesPosted?.length > 0 ? (
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                  {user.servicesPosted.map((svc: any) => (
+                    <Link key={svc.id} href={`/servicio/${svc.id}`} className="min-w-[200px] p-3 rounded-2xl border border-brand-100 bg-brand-50 shadow-sm flex flex-col gap-1 hover:border-brand-300 transition-colors">
+                      <span className="font-semibold text-gray-900 line-clamp-1">{svc.title}</span>
+                      <span className="text-xs text-brand-600 font-medium">{svc.status}</span>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 italic bg-gray-50 p-4 rounded-xl">No has publicado ningún servicio.</p>
+              )}
+            </div>
+
+          </div>
+        </div>
+
       </main>
 
       {/* MODAL DE EDICIÓN DE PERFIL */}
