@@ -1,9 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ChevronLeft, MapPin, Clock, Star, Heart, CheckCircle2 } from "lucide-react";
 import FavoriteButton from "./FavoriteButton";
 import { getCurrentUser } from "@/app/actions";
+
+const ServiceLocationDisplay = dynamic(() => import('@/components/ServiceLocationDisplay'), {
+  ssr: false,
+  loading: () => <div className="w-full h-[200px] bg-gray-100 rounded-2xl flex items-center justify-center text-gray-500 text-sm font-semibold border border-brand-200 mt-6">Cargando mapa...</div>
+});
 
 export default async function ServicioDetalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -93,16 +99,14 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
         {/* Detalles Rápidos */}
         <section className="grid grid-cols-2 gap-4">
           <div className="bg-gray-50 p-4 rounded-2xl flex flex-col gap-1 border border-gray-100">
-            <MapPin className="w-5 h-5 text-gray-400 mb-1" />
-            <span className="font-bold text-gray-900 text-sm">Ubicación</span>
-            <span className="text-xs text-gray-500">A coordinar</span>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-2xl flex flex-col gap-1 border border-gray-100">
             <Clock className="w-5 h-5 text-gray-400 mb-1" />
             <span className="font-bold text-gray-900 text-sm">Urgencia</span>
             <span className="text-xs text-gray-500">{servicio.urgency}</span>
           </div>
         </section>
+
+        {/* Ubicación del Servicio */}
+        <ServiceLocationDisplay latitude={servicio.latitude} longitude={servicio.longitude} />
 
       </main>
 
