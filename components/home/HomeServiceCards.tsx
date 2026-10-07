@@ -105,7 +105,7 @@ export async function HomeServiceCards() {
       </section>
 
       {/* Section 2: Trabajos recientes */}
-      <section className="px-4 py-2 max-w-md mx-auto w-full pb-24">
+      <section className="px-4 py-2 max-w-md mx-auto w-full pb-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-900">Trabajos recientes publicados</h2>
           <Link href="/buscar-trabajo" className="p-1.5 bg-brand-100 rounded-full hover:bg-brand-300 transition-colors">
@@ -136,6 +136,34 @@ export async function HomeServiceCards() {
               </Link>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Section 3: Mid Categories */}
+      <section className="px-4 py-6 max-w-md mx-auto w-full">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Encuentra servicios cerca de ti</h2>
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
+          
+          <Link href="/buscar-trabajo?cat=Automotriz" className="snap-start min-w-[140px] h-[120px] bg-[#f7f7f7] hover:bg-[#f0f0f0] rounded-3xl flex flex-col items-center justify-center gap-2 transition-colors border border-transparent hover:border-gray-200">
+            <span className="text-5xl drop-shadow-md">🚗</span>
+            <span className="font-bold text-gray-900 text-sm">Automotriz</span>
+          </Link>
+          
+          <Link href="/buscar-trabajo?cat=Fotografía" className="snap-start min-w-[140px] h-[120px] bg-[#f7f7f7] hover:bg-[#f0f0f0] rounded-3xl flex flex-col items-center justify-center gap-2 transition-colors border border-transparent hover:border-gray-200">
+            <span className="text-5xl drop-shadow-md">📷</span>
+            <span className="font-bold text-gray-900 text-sm">Fotografía</span>
+          </Link>
+
+          <Link href="/buscar-trabajo?cat=Cocina" className="snap-start min-w-[140px] h-[120px] bg-[#f7f7f7] hover:bg-[#f0f0f0] rounded-3xl flex flex-col items-center justify-center gap-2 transition-colors border border-transparent hover:border-gray-200">
+            <span className="text-5xl drop-shadow-md">🔪</span>
+            <span className="font-bold text-gray-900 text-sm">Cocina</span>
+          </Link>
+
+          <Link href="/buscar-trabajo?cat=Reparaciones" className="snap-start min-w-[140px] h-[120px] bg-[#f7f7f7] hover:bg-[#f0f0f0] rounded-3xl flex flex-col items-center justify-center gap-2 transition-colors border border-transparent hover:border-gray-200">
+            <span className="text-5xl drop-shadow-md">🔧</span>
+            <span className="font-bold text-gray-900 text-sm">Reparaciones</span>
+          </Link>
+          
         </div>
       </section>
 
