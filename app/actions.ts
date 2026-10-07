@@ -146,6 +146,23 @@ export async function publishService(formData: FormData) {
   // Si no subieron foto, usamos un placeholder. Si subieron, usamos la de base64.
   const finalImage = base64Image ? base64Image : "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=600&q=80";
 
+  // Reverse geocoding para obtener el distrito/provincia
+  let locationName = "Ubicación desconocida";
+  if (latitude && longitude) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+      const data = await res.json();
+      if (data && data.address) {
+        const { suburb, city, town, state } = data.address;
+        const district = suburb || town || city || "";
+        const province = city || town || "";
+        locationName = [district, province].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(", ") || state || "Ubicación desconocida";
+      }
+    } catch (e) {
+      console.error("Geocoding failed", e);
+    }
+  }
+
   // Crear servicio en Prisma
   await prisma.serviceRequest.create({
     data: {
@@ -158,6 +175,7 @@ export async function publishService(formData: FormData) {
       clientId: user.id,
       latitude: latitude || -12.046 + (Math.random() - 0.5) * 0.05,
       longitude: longitude || -77.042 + (Math.random() - 0.5) * 0.05,
+      locationName,
       images: finalImage,
     }
   });

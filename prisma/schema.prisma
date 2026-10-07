@@ -66,6 +66,7 @@ model ServiceRequest {
   status      String   @default("PUBLISHED")
   latitude    Float?
   longitude   Float?
+  locationName String?
   // No array en SQLite (solo String)
   images      String   @default("[]") 
   createdAt   DateTime @default(now())
