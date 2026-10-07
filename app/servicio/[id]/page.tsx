@@ -108,9 +108,23 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
       {/* Footer Fijo */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 z-50">
         <div className="max-w-md mx-auto flex items-center gap-4">
-          <button className="flex-1 bg-black text-white font-bold text-lg py-4 rounded-2xl shadow-lg hover:bg-gray-800 transition-colors">
-            Postular a este trabajo
-          </button>
+          {!user ? (
+            <Link href="/login" className="flex-1 bg-brand-500 text-white text-center font-bold text-lg py-4 rounded-2xl shadow-lg hover:bg-brand-700 transition-colors">
+              Inicia sesión para postular
+            </Link>
+          ) : user.id === servicio.clientId ? (
+            <button disabled className="flex-1 bg-gray-200 text-gray-500 font-bold text-lg py-4 rounded-2xl cursor-not-allowed">
+              Este es tu trabajo
+            </button>
+          ) : user.role === "CLIENT" ? (
+            <Link href="/hazte-prestador" className="flex-1 bg-gradient-to-r from-brand-900 to-brand-700 text-white text-center font-bold text-lg py-4 rounded-2xl shadow-lg hover:opacity-90 transition-opacity">
+              Conviértete en Prestador
+            </Link>
+          ) : (
+            <button className="flex-1 bg-black text-white font-bold text-lg py-4 rounded-2xl shadow-lg hover:bg-gray-800 transition-colors">
+              Postular a este trabajo
+            </button>
+          )}
         </div>
       </div>
     </div>
