@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Camera, ImagePlus, ChevronLeft, MapPin, X } from "lucide-react";
+import { PERU_LOCATIONS } from "@/lib/peruLocations";
 import { publishService } from "@/app/actions";
 import { useRouter } from "next/navigation";
 
@@ -20,6 +21,11 @@ export default function PublicarServicio() {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Ubigeo Selects
+  const [departamento, setDepartamento] = useState("");
+  const [provincia, setProvincia] = useState("");
+  const [distrito, setDistrito] = useState("");
 
   const categorias = ["Gasfitería", "Electricidad", "Carpintería", "Armado de Muebles", "Reparaciones", "Pintura"];
   const urgencias = [
@@ -217,11 +223,66 @@ export default function PublicarServicio() {
           </div>
         </section>
 
-        {/* Ubicación Visual */}
+        {/* Ubicación Visual y Selects */}
         <section>
-          <h2 className="text-sm font-bold text-brand-900 mb-3">Ubicación exacta</h2>
-          <p className="text-xs text-gray-500 mb-3">Toca el mapa para indicar dónde necesitas el servicio. La ubicación exacta solo la verá el prestador contratado; los demás verán un área aproximada.</p>
+          <h2 className="text-sm font-bold text-brand-900 mb-3">Ubicación de tu servicio</h2>
           
+          <div className="flex flex-col gap-3 mb-4">
+            <select 
+              value={departamento}
+              onChange={(e) => {
+                setDepartamento(e.target.value);
+                setProvincia("");
+                setDistrito("");
+              }}
+              className="w-full bg-white border border-brand-200 rounded-xl p-3 text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none"
+              required
+            >
+              <option value="">Selecciona Departamento</option>
+              {Object.keys(PERU_LOCATIONS).map(dep => (
+                <option key={dep} value={dep}>{dep}</option>
+              ))}
+            </select>
+
+            <select 
+              value={provincia}
+              onChange={(e) => {
+                setProvincia(e.target.value);
+                setDistrito("");
+              }}
+              disabled={!departamento}
+              className="w-full bg-white border border-brand-200 rounded-xl p-3 text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none disabled:bg-gray-50 disabled:text-gray-400"
+              required
+            >
+              <option value="">Selecciona Provincia</option>
+              {departamento && Object.keys(PERU_LOCATIONS[departamento]).map(prov => (
+                <option key={prov} value={prov}>{prov}</option>
+              ))}
+            </select>
+
+            <select 
+              value={distrito}
+              onChange={(e) => setDistrito(e.target.value)}
+              disabled={!provincia}
+              className="w-full bg-white border border-brand-200 rounded-xl p-3 text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none disabled:bg-gray-50 disabled:text-gray-400"
+              required
+            >
+              <option value="">Selecciona Distrito</option>
+              {provincia && PERU_LOCATIONS[departamento][provincia].map(dist => (
+                <option key={dist} value={dist}>{dist}</option>
+              ))}
+            </select>
+          </div>
+          
+          {distrito && (
+            <input 
+              type="hidden" 
+              name="locationName" 
+              value={`${distrito}, ${provincia}`} 
+            />
+          )}
+
+          <p className="text-xs text-gray-500 mb-3">Opcional: Toca el mapa para indicar el punto exacto. Solo lo verá el prestador contratado.</p>
           <LocationPickerMap 
             onLocationChange={(lat, lng) => {
               setLatitude(lat);
@@ -234,10 +295,10 @@ export default function PublicarServicio() {
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 z-50 shadow-[0_-10px_20px_rgb(0,0,0,0.05)]">
           <button 
             type="submit" 
-            disabled={isPending || !latitude || !longitude}
+            disabled={isPending || !distrito}
             className="w-full max-w-md mx-auto block bg-brand-500 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-brand-700 transition-colors disabled:opacity-50"
           >
-            {isPending ? "Publicando..." : (!latitude ? "Falta ubicación" : "Publicar Solicitud")}
+            {isPending ? "Publicando..." : (!distrito ? "Falta ubicación" : "Publicar Solicitud")}
           </button>
         </div>
       </form>

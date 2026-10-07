@@ -146,9 +146,11 @@ export async function publishService(formData: FormData) {
   // Si no subieron foto, usamos un placeholder. Si subieron, usamos la de base64.
   const finalImage = base64Image ? base64Image : "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=600&q=80";
 
-  // Reverse geocoding para obtener el distrito/provincia
-  let locationName = "Ubicación desconocida";
-  if (latitude && longitude) {
+  const manualLocationName = formData.get("locationName") as string;
+  let locationName = manualLocationName || "Ubicación desconocida";
+
+  // Reverse geocoding fallback
+  if (!manualLocationName && latitude && longitude) {
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
       const data = await res.json();
