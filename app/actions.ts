@@ -139,7 +139,7 @@ export async function mockGoogleLogin(email: string, name: string) {
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete("userId");
-  redirect("/");
+  return { success: true };
 }
 
 // Obtener usuario actual
