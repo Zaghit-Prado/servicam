@@ -29,6 +29,12 @@ export default function MapaInteractivo() {
   const [maxPrice, setMaxPrice] = useState(1000);
 
   useEffect(() => {
+    getMapServices().then(data => {
+      setAllServices(data);
+    }).catch(e => console.error("Error fetching map services", e));
+  }, []);
+
+  useEffect(() => {
     let filtered = allServices;
     if (filtro !== "Todos") {
       filtered = filtered.filter(s => s.category === filtro);
