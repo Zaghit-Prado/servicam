@@ -19,9 +19,24 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
     pets: user?.pets || "",
     languages: user?.languages || "",
     image: user?.image || "",
-    name: user?.name || ""
+    name: user?.name || "",
+    bio: user?.bio || "",
+    skills: user?.skills?.map((s: any) => s.name) || []
   });
   const [loading, setLoading] = useState(false);
+
+  const skillOptions = [
+    "Gasfitería", "Electricidad", "Carpintería", "Instalación de focos",
+    "Armado de muebles", "Reparaciones", "Pintura", "Mantenimiento", "Obras varias"
+  ];
+
+  const toggleSkill = (skill: string) => {
+    if (formData.skills.includes(skill)) {
+      setFormData({ ...formData, skills: formData.skills.filter((s: string) => s !== skill) });
+    } else {
+      setFormData({ ...formData, skills: [...formData.skills, skill] });
+    }
+  };
 
   const handleSave = async () => {
     setLoading(true);
@@ -313,6 +328,51 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
                 </div>
 
               </div>
+
+              {user.role === "PROVIDER" && (
+                <div className="mt-8 border-t border-gray-200 pt-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Mi Perfil Profesional</h3>
+                  <p className="text-gray-500 text-sm mb-6">
+                    Añade o modifica los detalles sobre tu trabajo y las habilidades que ofreces.
+                  </p>
+
+                  <div className="flex flex-col gap-6">
+                    <div className="border border-gray-300 rounded-xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-colors">
+                      <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1 block">Sobre mi trabajo</label>
+                      <textarea 
+                        className="w-full outline-none text-gray-900 font-medium resize-none" 
+                        rows={3}
+                        placeholder="Ej: Soy experto en..." 
+                        value={formData.bio} 
+                        onChange={(e) => setFormData({...formData, bio: e.target.value})} 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-3 block">Mis Especialidades</label>
+                      <div className="flex flex-wrap gap-2">
+                        {skillOptions.map((skill) => {
+                          const isSelected = formData.skills.includes(skill);
+                          return (
+                            <button
+                              key={skill}
+                              type="button"
+                              onClick={() => toggleSkill(skill)}
+                              className={`px-4 py-2 rounded-full border text-sm font-semibold transition-colors ${
+                                isSelected 
+                                  ? "bg-brand-900 border-brand-900 text-white" 
+                                  : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                              }`}
+                            >
+                              {skill}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-8 pb-10">
                 <button 
