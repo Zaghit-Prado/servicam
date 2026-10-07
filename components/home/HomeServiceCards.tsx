@@ -140,7 +140,7 @@ export async function HomeServiceCards() {
       </section>
 
       {/* Dynamic Location Carousels */}
-      {Object.entries(groupedServices)
+      {(Object.entries(groupedServices) as [string, any[]][])
         // Shuffle groups
         .sort(() => Math.random() - 0.5)
         .map(([location, groupServices]) => {
