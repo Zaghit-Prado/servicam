@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { requestLoginCode, verifyLoginCode } from "@/app/actions";
+import { requestLoginCode, verifyLoginCode, mockGoogleLogin } from "@/app/actions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -118,7 +118,11 @@ export default function Login() {
                 <div className="flex-grow border-t border-gray-200"></div>
               </div>
 
-              <button className="w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-gray-400 text-gray-900 font-semibold py-4 rounded-xl transition-colors mb-4">
+              <button 
+                type="button"
+                onClick={() => setStep("google")}
+                className="w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-gray-400 text-gray-900 font-semibold py-4 rounded-xl transition-colors mb-4"
+              >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -169,7 +173,65 @@ export default function Login() {
                 ¿No lo recibiste? <button type="button" onClick={handleRequestCode} className="text-gray-900 font-bold underline">Enviar un nuevo código</button>
               </p>
             </motion.div>
-          )}
+          ) : step === "google" ? (
+            <motion.div 
+              key="google-step"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="w-full flex flex-col items-center"
+            >
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                Selecciona una cuenta
+              </h1>
+              <p className="text-gray-500 mb-8 text-center">
+                Para ir a ServiCam (Entorno de pruebas)
+              </p>
+
+              <div className="w-full flex flex-col gap-3">
+                <button 
+                  onClick={async () => {
+                    setLoading(true);
+                    await mockGoogleLogin("luis@gmail.com", "Luis Pérez");
+                    router.push("/");
+                  }}
+                  className="w-full flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg">
+                    L
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900">Luis Pérez</p>
+                    <p className="text-sm text-gray-500">luis@gmail.com</p>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={async () => {
+                    setLoading(true);
+                    await mockGoogleLogin("zaghit@gmail.com", "Zaghit Aaron");
+                    router.push("/");
+                  }}
+                  className="w-full flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-lg">
+                    Z
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900">Zaghit Aaron</p>
+                    <p className="text-sm text-gray-500">zaghit@gmail.com</p>
+                  </div>
+                </button>
+              </div>
+
+              <button 
+                onClick={() => setStep("email")}
+                className="mt-6 text-gray-500 font-medium hover:text-gray-900 transition-colors"
+              >
+                Volver
+              </button>
+            </motion.div>
+          ) : null}
         </AnimatePresence>
       </div>
     </div>

@@ -109,6 +109,32 @@ export async function verifyLoginCode(email: string, code: string) {
   return { success: true };
 }
 
+// 3. Simular inicio de sesión con Google
+export async function mockGoogleLogin(email: string, name: string) {
+  let user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        email,
+        name,
+        emailVerified: new Date(),
+        role: "CLIENT",
+      },
+    });
+  } else {
+    await prisma.user.update({
+      where: { email },
+      data: { emailVerified: new Date() },
+    });
+  }
+
+  const cookieStore = await cookies();
+  cookieStore.set("userId", user.id, { httpOnly: true, secure: process.env.NODE_ENV === "production" });
+
+  return { success: true };
+}
+
 // Cerrar sesión
 export async function logout() {
   const cookieStore = await cookies();
