@@ -149,7 +149,13 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
         </div>
 
         {/* Settings Links */}
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col gap-2">
+          {user.role === "ADMIN" && (
+            <Link href="/admin" className="w-full flex items-center justify-between py-4 hover:bg-brand-50 transition-colors">
+              <span className="font-bold text-red-600 text-[17px] underline">Panel de Administrador</span>
+            </Link>
+          )}
+
           <form action={logout}>
             <button type="submit" className="w-full flex items-center justify-between py-4 hover:bg-brand-50 transition-colors">
               <span className="font-medium text-brand-900 text-[17px] underline">Cerrar sesión</span>

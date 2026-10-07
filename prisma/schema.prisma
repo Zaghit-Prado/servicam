@@ -31,6 +31,7 @@ model User {
   pets          String?
   languages     String?
   isVerified    Boolean   @default(false)
+  isBanned      Boolean   @default(false)
 
   // Relaciones Cliente
   servicesPosted ServiceRequest[] @relation("ClientServices")
@@ -105,4 +106,12 @@ model Message {
 
   receiverId  String
   receiver    User     @relation("MessagesReceived", fields: [receiverId], references: [id])
+}
+
+model SystemCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  icon        String?  // Ej: "🚗", "📷"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
 }
