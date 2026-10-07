@@ -1,13 +1,13 @@
-import { getCurrentUser } from "@/app/actions";
+import { checkAdmin, logoutAdmin } from "@/app/actions/adminAuth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LayoutDashboard, Users, AlertTriangle, MessageSquare, Settings, LogOut, ArrowLeft } from "lucide-react";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCurrentUser();
+  const isAdmin = await checkAdmin();
   
-  if (!user || user.role !== "ADMIN") {
-    redirect("/");
+  if (!isAdmin) {
+    redirect("/admin-login");
   }
 
   return (
@@ -40,9 +40,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </nav>
 
         <div className="p-4 border-t border-white/10">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-colors">
-            <ArrowLeft className="w-5 h-5" /> Salir del Panel
-          </Link>
+          <form action={logoutAdmin}>
+            <button type="submit" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-colors">
+              <LogOut className="w-5 h-5" /> Salir del Panel
+            </button>
+          </form>
         </div>
       </aside>
 

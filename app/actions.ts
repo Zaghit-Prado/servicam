@@ -249,14 +249,3 @@ export async function becomeProvider(data: { bio: string, skills: string[], imag
 
   return { success: true };
 }
-
-export async function makeMeAdmin() {
-  const user = await getCurrentUser();
-  if (!user) throw new Error("Debes iniciar sesión");
-
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { role: "ADMIN" }
-  });
-  return { success: true };
-}
