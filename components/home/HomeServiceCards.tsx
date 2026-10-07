@@ -67,37 +67,34 @@ export async function HomeServiceCards() {
               : "Nuevo";
 
             return (
-              <div key={prestador.id} className="snap-start min-w-[280px] flex flex-col gap-3">
-                <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-brand-100 group block">
-                  {prestador.image ? (
-                    <img src={prestador.image || undefined} alt={prestador.name || ""} className="absolute inset-0 w-full h-full object-cover z-0" />
-                  ) : (
-                    <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-500 to-brand-300"></div>
-                  )}
-                  <Link href={`/perfil/${prestador.id}`} className="absolute inset-0 z-10"></Link>
-                  <div className="absolute top-3 right-3 z-20">
-                    <button className="p-1">
-                      <Heart className="w-6 h-6 text-white stroke-[1.5px] drop-shadow-md hover:fill-brand-500 hover:text-brand-500 transition-colors" />
-                    </button>
-                  </div>
-                  {prestador.reviewsReceived.length > 5 && (
-                    <div className="absolute top-3 left-3 z-20 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-gray-900 shadow-sm pointer-events-none">
-                      Favorito de clientes
-                    </div>
-                  )}
+              <div key={prestador.id} className="snap-start min-w-[200px] sm:min-w-[220px] relative h-[280px] rounded-[32px] overflow-hidden group shadow-sm border border-gray-100">
+                {prestador.image ? (
+                  <img src={prestador.image || undefined} alt={prestador.name || ""} className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105" />
+                ) : (
+                  <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-500 to-brand-300"></div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10 pointer-events-none"></div>
+                
+                <Link href={`/perfil/${prestador.id}`} className="absolute inset-0 z-20"></Link>
+                
+                <div className="absolute top-4 right-4 z-30">
+                  <button className="p-2 bg-black/20 backdrop-blur-md rounded-full border border-white/20 hover:bg-black/40 transition-colors">
+                    <Heart className="w-5 h-5 text-white stroke-[2px] hover:fill-brand-500 hover:text-brand-500 transition-colors" />
+                  </button>
                 </div>
-                <Link href={`/perfil/${prestador.id}`} className="block">
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-semibold text-gray-900 text-base">
-                      {prestador.skills.length > 0 ? prestador.skills[0].name : "Servicios Generales"}
-                    </h3>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Star className="w-4 h-4 fill-brand-900 text-brand-900" />
+                
+                <div className="absolute bottom-5 left-5 right-5 z-20 text-white">
+                  <h3 className="font-bold text-xl drop-shadow-md">
+                    {prestador.skills.length > 0 ? prestador.skills[0].name : "Servicios Generales"}
+                  </h3>
+                  <div className="flex items-center justify-between mt-1 opacity-90 text-sm">
+                    <p className="line-clamp-1 flex-1 font-medium text-white/90">{prestador.name}</p>
+                    <div className="flex items-center gap-1 font-bold">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                       <span>{avgRating}</span>
                     </div>
                   </div>
-                  <p className="text-gray-500 text-sm">{prestador.name}</p>
-                </Link>
+                </div>
               </div>
             );
           })}
@@ -115,25 +112,27 @@ export async function HomeServiceCards() {
         
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
           {serviciosRecientes.map((servicio) => (
-            <div key={servicio.id} className="snap-start min-w-[280px] flex flex-col gap-3">
-              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-brand-100 group block">
-                {servicio.images && servicio.images.length > 5 && (servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? (
-                  <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover z-0" />
-                ) : (
-                  <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>
-                )}
-                <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-10"></Link>
-                <div className="absolute top-3 right-3 z-20">
-                  <FavoriteButton serviceId={servicio.id} initialFavorited={savedServiceIds.has(servicio.id)} variant="card" />
+            <div key={servicio.id} className="snap-start min-w-[200px] sm:min-w-[220px] relative h-[280px] rounded-[32px] overflow-hidden group shadow-sm border border-gray-100">
+              {servicio.images && servicio.images.length > 5 && (servicio.images.startsWith("http") || servicio.images.startsWith("data:image")) ? (
+                <img src={servicio.images} alt={servicio.title} className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105" />
+              ) : (
+                <div className="absolute inset-0 z-0 bg-gradient-to-tr from-brand-900 to-brand-700"></div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 pointer-events-none"></div>
+              
+              <Link href={`/servicio/${servicio.id}`} className="absolute inset-0 z-20"></Link>
+              
+              <div className="absolute top-4 right-4 z-30">
+                <FavoriteButton serviceId={servicio.id} initialFavorited={savedServiceIds.has(servicio.id)} variant="card" />
+              </div>
+              
+              <div className="absolute bottom-5 left-5 right-5 z-20 text-white">
+                <h3 className="font-bold text-lg drop-shadow-md leading-tight mb-1 line-clamp-2">{servicio.title}</h3>
+                <p className="text-white/80 text-sm line-clamp-1 mb-3">{servicio.description}</p>
+                <div className="bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-xl inline-block border border-white/20 shadow-sm">
+                  <span className="font-bold text-sm drop-shadow-sm">S/ {servicio.minPrice} - S/ {servicio.maxPrice}</span>
                 </div>
               </div>
-              <Link href={`/servicio/${servicio.id}`} className="block">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-gray-900 text-base">{servicio.title}</h3>
-                </div>
-                <p className="text-gray-500 text-sm line-clamp-1">{servicio.description}</p>
-                <p className="text-gray-900 mt-1"><span className="font-semibold">S/ {servicio.minPrice} - S/ {servicio.maxPrice}</span> presupuesto</p>
-              </Link>
             </div>
           ))}
         </div>
