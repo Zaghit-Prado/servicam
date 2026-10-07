@@ -4,9 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/app/actions";
 import { notFound } from "next/navigation";
 
-export default async function PerfilPrestador({ params }: { params: { id: string } }) {
+export default async function PerfilPrestador({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   const provider = await prisma.user.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       skills: true,
       reviewsReceived: true,
