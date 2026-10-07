@@ -132,7 +132,7 @@ export default function Login() {
                 Continuar con Google
               </button>
             </motion.div>
-          ) : (
+          ) : step === "code" ? (
             <motion.div 
               key="code-step"
               initial={{ opacity: 0, x: 20 }}
