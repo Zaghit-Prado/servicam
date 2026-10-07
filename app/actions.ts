@@ -195,3 +195,37 @@ export async function toggleFavorite(serviceId: string) {
     return { isFavorited: true };
   }
 }
+
+export async function becomeProvider(data: { bio: string, skills: string[], image?: string }) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Debes iniciar sesión");
+
+  // Upsert de habilidades y conexión
+  const skillsConnect = await Promise.all(data.skills.map(async (skillName) => {
+    const skill = await prisma.skill.upsert({
+      where: { name: skillName },
+      update: {},
+      create: { name: skillName }
+    });
+    return { id: skill.id };
+  }));
+
+  const updateData: any = {
+    role: "PROVIDER",
+    bio: data.bio,
+    skills: {
+      connect: skillsConnect
+    }
+  };
+
+  if (data.image) {
+    updateData.image = data.image;
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: updateData
+  });
+
+  return { success: true };
+}

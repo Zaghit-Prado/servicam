@@ -156,6 +156,40 @@ export default function PerfilClient({ user, stats }: { user: any, stats: any })
             </button>
           </form>
         </div>
+
+        {/* Banner para convertirse en prestador (solo clientes) */}
+        {user.role === "CLIENT" && (
+          <div className="mt-6 bg-gradient-to-r from-brand-900 to-brand-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="relative z-10">
+              <h3 className="font-bold text-lg mb-2">¿Quieres prestar servicios?</h3>
+              <p className="text-sm text-brand-100 mb-4 opacity-90">Únete como prestador, ofrece tus habilidades y empieza a generar ingresos extra.</p>
+              <Link href="/hazte-prestador" className="bg-white text-brand-900 px-6 py-2.5 rounded-full font-bold text-sm inline-block hover:bg-gray-50 transition-colors shadow-sm">
+                Comenzar ahora
+              </Link>
+            </div>
+            <Briefcase className="absolute right-[-20px] bottom-[-20px] w-32 h-32 text-white opacity-10 transform -rotate-12" />
+          </div>
+        )}
+
+        {/* Información del Prestador */}
+        {user.role === "PROVIDER" && (
+          <div className="mt-8 border-t border-brand-100 pt-6">
+            <h3 className="font-bold text-xl text-brand-900 mb-3">Sobre mi trabajo</h3>
+            {user.bio ? (
+              <p className="text-gray-700 text-[17px] leading-relaxed mb-4">{user.bio}</p>
+            ) : (
+              <p className="text-gray-400 text-sm italic mb-4">Sin descripción profesional.</p>
+            )}
+            
+            <div className="flex flex-wrap gap-2">
+              {user.skills?.map((s: any) => (
+                <span key={s.id} className="bg-brand-50 text-brand-700 px-4 py-1.5 rounded-full text-sm font-bold border border-brand-100">
+                  {s.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       {/* MODAL DE EDICIÓN DE PERFIL */}

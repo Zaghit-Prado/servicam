@@ -24,6 +24,7 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // Campos de Perfil (Airbnb style)
+  bio           String?
   work          String?
   dreamDest     String?
   timeSpent     String?
