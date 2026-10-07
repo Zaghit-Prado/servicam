@@ -1,15 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { ChevronLeft, MapPin, Clock, Star, Heart, CheckCircle2 } from "lucide-react";
 import FavoriteButton from "./FavoriteButton";
 import { getCurrentUser } from "@/app/actions";
-
-const ServiceLocationDisplay = dynamic(() => import('@/components/ServiceLocationDisplay'), {
-  ssr: false,
-  loading: () => <div className="w-full h-[200px] bg-gray-100 rounded-2xl flex items-center justify-center text-gray-500 text-sm font-semibold border border-brand-200 mt-6">Cargando mapa...</div>
-});
+import ServiceLocationWrapper from "@/components/ServiceLocationWrapper";
 
 export default async function ServicioDetalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -106,7 +101,7 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
         </section>
 
         {/* Ubicación del Servicio */}
-        <ServiceLocationDisplay latitude={servicio.latitude} longitude={servicio.longitude} />
+        <ServiceLocationWrapper latitude={servicio.latitude} longitude={servicio.longitude} />
 
       </main>
 
