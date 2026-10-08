@@ -35,7 +35,21 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
 
   // RECOMENDACIÓN DE PRESTADORES (SOLO PARA EL CLIENTE QUE PUBLICÓ)
   let recommendedProviders: any[] = [];
+  let serviceApplications: any[] = [];
+  
   if (user && user.id === servicio.clientId) {
+    // 1. Obtener los postulantes reales
+    serviceApplications = await prisma.application.findMany({
+      where: { serviceId: id },
+      include: {
+        provider: {
+          include: { skills: true, reviewsReceived: true, servicesDone: true }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    // 2. Obtener recomendaciones
     const allProviders = await prisma.user.findMany({
       where: { role: "PROVIDER" },
       include: { skills: true, reviewsReceived: true, servicesDone: true }
@@ -56,7 +70,12 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
       return { ...prov, matchScore: score };
     });
 
-    recommendedProviders = scored.filter(p => p.matchScore > 0).sort((a, b) => b.matchScore - a.matchScore).slice(0, 5);
+    // Excluir a los que ya postularon de las recomendaciones
+    const appliedProviderIds = serviceApplications.map(app => app.providerId);
+    recommendedProviders = scored
+      .filter(p => p.matchScore > 0 && !appliedProviderIds.includes(p.id))
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .slice(0, 5);
   }
 
   return (
@@ -135,61 +154,90 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
         {/* Ubicación del Servicio */}
         <ServiceLocationWrapper latitude={servicio.latitude} longitude={servicio.longitude} />
 
-        {/* RECOMENDACIONES (SOLO DUEÑO) */}
-        {user && user.id === servicio.clientId && (
-          <section className="mt-4 border-t border-gray-100 pt-6">
-            <h2 className="font-bold text-xl text-gray-900 mb-2">Personas recomendadas para este servicio</h2>
-            <p className="text-sm text-gray-500 mb-6">Hemos encontrado estos prestadores compatibles con tu publicación.</p>
+        {/* POSTULANTES INTERESADOS (SOLO DUEÑO) */}
+        {user && user.id === servicio.clientId && serviceApplications.length > 0 && (
+          <section id="interesados" className="mt-4 border-t border-gray-100 pt-6 scroll-mt-24">
+            <h2 className="font-bold text-xl text-gray-900 mb-2">Interesados en este trabajo</h2>
+            <p className="text-sm text-gray-500 mb-6">Estas personas han postulado a tu anuncio y te han enviado un mensaje.</p>
             
             <div className="flex flex-col gap-4">
-              {recommendedProviders.length > 0 ? (
-                recommendedProviders.map(prov => {
-                  const rating = prov.reviewsReceived.length > 0
-                    ? (prov.reviewsReceived.reduce((a: any, r: any) => a + r.rating, 0) / prov.reviewsReceived.length).toFixed(1)
-                    : "Nuevo";
+              {serviceApplications.map(app => {
+                const prov = app.provider;
+                const rating = prov.reviewsReceived.length > 0
+                  ? (prov.reviewsReceived.reduce((a: any, r: any) => a + r.rating, 0) / prov.reviewsReceived.length).toFixed(1)
+                  : "Nuevo";
 
-                  return (
-                    <div key={prov.id} className="bg-white border border-brand-100 p-4 rounded-2xl shadow-sm flex items-start gap-4">
-                      <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
-                        {prov.image ? <img src={prov.image} alt={prov.name} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-brand-100 flex items-center justify-center font-bold text-brand-500">{prov.name?.[0] || "U"}</div>}
+                return (
+                  <div key={app.id} className="bg-white border-2 border-brand-500 p-4 rounded-2xl shadow-sm flex items-start gap-4 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">¡Interesado!</div>
+                    <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden flex-shrink-0 mt-1">
+                      {prov.image ? <img src={prov.image} alt={prov.name} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-brand-100 flex items-center justify-center font-bold text-brand-500">{prov.name?.[0] || "U"}</div>}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">{prov.name}</h3>
+                      <div className="flex items-center gap-3 text-xs text-gray-500 mb-2 mt-1">
+                        <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> {rating}</span>
+                        <span>•</span>
+                        <span>{prov.servicesDone.length} trabajos</span>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-gray-900">{prov.name}</h3>
-                        <p className="text-xs text-brand-600 font-semibold mb-1">
-                          Coincidencia: {prov.matchScore >= 50 ? "Alta ⭐" : "Media"}
-                        </p>
-                        <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
-                          <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> {rating}</span>
-                          <span>•</span>
-                          <span>{prov.servicesDone.length} trabajos</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {prov.skills.slice(0, 2).map((sk: any) => (
-                            <span key={sk.id} className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md text-[10px] font-medium">{sk.name}</span>
-                          ))}
-                          {prov.skills.length > 2 && <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md text-[10px] font-medium">+{prov.skills.length - 2}</span>}
-                        </div>
-                        <div className="flex gap-2">
-                          <Link href={`/perfil/${prov.id}`} className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-800 text-center py-2 rounded-xl text-xs font-bold transition-colors">
-                            Ver Perfil
-                          </Link>
-                          <Link href={`/chat/${prov.id}`} className="flex-1 bg-brand-900 hover:bg-brand-700 text-white text-center py-2 rounded-xl text-xs font-bold transition-colors">
-                            Contactar
-                          </Link>
-                        </div>
+                      <div className="flex gap-2 mt-3">
+                        <Link href={`/perfil/${prov.id}`} className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-800 text-center py-2 rounded-xl text-xs font-bold transition-colors">
+                          Ver Perfil
+                        </Link>
+                        <Link href={`/chat/${prov.id}`} className="flex-1 bg-brand-900 hover:bg-brand-700 text-white text-center py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                          Abrir Chat
+                        </Link>
                       </div>
                     </div>
-                  );
-                })
-              ) : (
-                <div className="bg-gray-50 p-6 rounded-2xl text-center border border-gray-100">
-                  <p className="text-gray-500 text-sm">Aún no hay prestadores con habilidades exactas para este trabajo, pero pronto podrían postular.</p>
-                </div>
-              )}
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
 
+        {/* RECOMENDACIONES (SOLO DUEÑO) */}
+        {user && user.id === servicio.clientId && recommendedProviders.length > 0 && (
+          <section className="mt-4 border-t border-gray-100 pt-6">
+            <h2 className="font-bold text-xl text-gray-900 mb-2">Personas recomendadas</h2>
+            <p className="text-sm text-gray-500 mb-6">Hemos encontrado estos prestadores compatibles con tu publicación.</p>
+            
+            <div className="flex flex-col gap-4">
+              {recommendedProviders.map(prov => {
+                const rating = prov.reviewsReceived.length > 0
+                  ? (prov.reviewsReceived.reduce((a: any, r: any) => a + r.rating, 0) / prov.reviewsReceived.length).toFixed(1)
+                  : "Nuevo";
+
+                return (
+                  <div key={prov.id} className="bg-white border border-brand-100 p-4 rounded-2xl shadow-sm flex items-start gap-4">
+                    <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+                      {prov.image ? <img src={prov.image} alt={prov.name} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-brand-100 flex items-center justify-center font-bold text-brand-500">{prov.name?.[0] || "U"}</div>}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">{prov.name}</h3>
+                      <p className="text-xs text-brand-600 font-semibold mb-1">
+                        Coincidencia: {prov.matchScore >= 50 ? "Alta ⭐" : "Media"}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                        <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> {rating}</span>
+                        <span>•</span>
+                        <span>{prov.servicesDone.length} trabajos</span>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <Link href={`/perfil/${prov.id}`} className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-800 text-center py-2 rounded-xl text-xs font-bold transition-colors">
+                          Ver Perfil
+                        </Link>
+                        <Link href={`/chat/${prov.id}`} className="flex-1 bg-brand-900 hover:bg-brand-700 text-white text-center py-2 rounded-xl text-xs font-bold transition-colors">
+                          Contactar
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </main>
 
       {/* Footer Fijo */}
@@ -200,9 +248,15 @@ export default async function ServicioDetalle({ params }: { params: Promise<{ id
               Inicia sesión para postular
             </Link>
           ) : user.id === servicio.clientId ? (
-            <button disabled className="flex-1 bg-gray-200 text-gray-500 font-bold text-lg py-4 rounded-2xl cursor-not-allowed">
-              Este es tu trabajo
-            </button>
+            serviceApplications.length > 0 ? (
+              <a href="#interesados" className="flex-1 bg-brand-900 text-white text-center font-bold text-lg py-4 rounded-2xl shadow-lg hover:opacity-90 transition-opacity">
+                Ver interesados ({serviceApplications.length})
+              </a>
+            ) : (
+              <button disabled className="flex-1 bg-gray-200 text-gray-500 font-bold text-lg py-4 rounded-2xl cursor-not-allowed">
+                Este es tu trabajo
+              </button>
+            )
           ) : user.role === "CLIENT" ? (
             <Link href="/hazte-prestador" className="flex-1 bg-gradient-to-r from-brand-900 to-brand-700 text-white text-center font-bold text-lg py-4 rounded-2xl shadow-lg hover:opacity-90 transition-opacity">
               Conviértete en Prestador
