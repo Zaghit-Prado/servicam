@@ -21,7 +21,7 @@ export default function ChatForm({ targetUserId }: { targetUserId: string }) {
   };
 
   return (
-    <footer className="sticky bottom-0 bg-[#0A0F1C]/60 backdrop-blur-xl border-t border-white/10 p-4 pb-safe z-50">
+    <footer className="flex-shrink-0 bg-[#0A0F1C]/60 backdrop-blur-xl border-t border-white/10 p-4 pb-safe z-50">
       <form onSubmit={handleSubmit} className="max-w-md mx-auto flex items-end gap-2">
         <div className="flex-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl flex items-center shadow-[0_4px_30px_rgba(0,0,0,0.1)] px-1 py-1 focus-within:border-[#10b981]/50 focus-within:bg-white/10 transition-colors">
           <button type="button" className="p-2.5 text-white/50 hover:text-white/90 transition-colors">
