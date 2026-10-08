@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, UserCircle, X, LogOut } from "lucide-react";
 import { getCurrentUser } from "@/app/actions";
 
 export function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
 
@@ -14,6 +16,8 @@ export function Navbar() {
       if (u) setUser(u);
     });
   }, []);
+
+  if (pathname.startsWith("/chat")) return null;
 
   return (
     <>

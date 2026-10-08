@@ -16,8 +16,8 @@ export function BottomNav() {
     });
   }, []);
 
-  // No mostrar en la vista del mapa para que el mapa ocupe todo
-  if (pathname === "/mapa") return null;
+  // No mostrar en la vista del mapa ni en el chat
+  if (pathname === "/mapa" || pathname.startsWith("/chat")) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 pb-safe z-40">

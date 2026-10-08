@@ -29,14 +29,14 @@ export default async function ChatPage({ params }: { params: Promise<{ id: strin
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0A0F1C] relative overflow-hidden selection:bg-brand-500/30">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-[#0A0F1C] overflow-hidden selection:bg-brand-500/30">
       {/* Luces de fondo (Liquid Glass Ambient) */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-500/20 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#10b981]/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute top-[40%] left-[50%] w-[40%] h-[40%] bg-brand-300/10 rounded-full blur-[100px] pointer-events-none transform -translate-x-1/2"></div>
 
       {/* Glass Header */}
-      <header className="sticky top-16 z-40 bg-[#0A0F1C]/60 backdrop-blur-xl border-b border-white/10 px-4 h-16 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+      <header className="flex-shrink-0 z-50 bg-[#0A0F1C]/40 backdrop-blur-xl border-b border-white/10 px-4 h-16 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
         <div className="flex items-center gap-3">
           <Link href="javascript:history.back()" className="p-2 -ml-2 text-white/80 hover:bg-white/10 rounded-full transition-colors">
             <ChevronLeft className="w-6 h-6" />
@@ -61,7 +61,8 @@ export default async function ChatPage({ params }: { params: Promise<{ id: strin
       </header>
 
       {/* Chat Area */}
-      <main className="flex-1 p-4 flex flex-col justify-end gap-5 max-w-md mx-auto w-full z-10 min-h-[calc(100vh-128px)]">
+      <main className="flex-1 p-4 flex flex-col gap-5 max-w-md mx-auto w-full z-10 overflow-y-auto hide-scrollbar">
+        <div className="flex-1"></div> {/* Spacer para empujar mensajes abajo */}
         {messages.length === 0 && (
           <div className="text-center text-xs text-white/40 my-4 backdrop-blur-sm bg-white/5 py-2 px-4 rounded-full self-center border border-white/5">
             Aún no hay mensajes. ¡Escribe algo!
