@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/app/actions";
 import ChatForm from "./ChatForm";
+import BackButton from "./BackButton";
 
 export default async function ChatPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -38,9 +39,7 @@ export default async function ChatPage({ params }: { params: Promise<{ id: strin
       {/* Glass Header */}
       <header className="flex-shrink-0 z-50 bg-[#0A0F1C]/40 backdrop-blur-xl border-b border-white/10 px-4 h-16 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
         <div className="flex items-center gap-3">
-          <Link href="javascript:history.back()" className="p-2 -ml-2 text-white/80 hover:bg-white/10 rounded-full transition-colors">
-            <ChevronLeft className="w-6 h-6" />
-          </Link>
+          <BackButton />
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-full flex items-center justify-center font-bold text-white overflow-hidden shadow-[0_0_15px_rgba(255,255,255,0.1)]">
               {targetUser.image ? <img src={targetUser.image} alt="" className="w-full h-full object-cover" /> : targetUser.name?.[0] || "U"}
