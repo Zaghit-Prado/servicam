@@ -1,16 +1,32 @@
 import Link from "next/link";
-import { ChevronLeft, Send, Phone, MoreVertical } from "lucide-react";
+import { ChevronLeft, Phone, MoreVertical } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getCurrentUser } from "@/app/actions";
+import ChatForm from "./ChatForm";
 
 export default async function ChatPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
+  const currentUser = await getCurrentUser();
+  if (!currentUser) redirect("/login");
+
   const targetUser = await prisma.user.findUnique({
     where: { id }
   });
 
   if (!targetUser) return notFound();
+
+  // Fetch messages between the two users
+  const messages = await prisma.message.findMany({
+    where: {
+      OR: [
+        { senderId: currentUser.id, receiverId: id },
+        { senderId: id, receiverId: currentUser.id }
+      ]
+    },
+    orderBy: { createdAt: "asc" }
+  });
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -36,27 +52,32 @@ export default async function ChatPage({ params }: { params: Promise<{ id: strin
       </header>
 
       <main className="flex-1 p-4 flex flex-col justify-end gap-4 max-w-md mx-auto w-full">
-        <div className="text-center text-xs text-gray-400 my-4">Hoy</div>
-        <div className="flex gap-2 w-full max-w-[80%]">
-          <div className="w-8 h-8 rounded-full bg-brand-100 flex-shrink-0" />
-          <div className="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-brand-50 text-sm text-gray-800">
-            Hola, acabo de ver el trabajo que publicaste o tu perfil. Me gustaría conectar contigo para hablar sobre los detalles.
-          </div>
-        </div>
+        {messages.length === 0 && (
+          <div className="text-center text-xs text-gray-400 my-4">Aún no hay mensajes. ¡Escribe algo!</div>
+        )}
+        
+        {messages.map((msg) => {
+          const isMine = msg.senderId === currentUser.id;
+          return (
+            <div key={msg.id} className={`flex gap-2 w-full max-w-[80%] ${isMine ? 'self-end justify-end' : 'self-start'}`}>
+              {!isMine && (
+                <div className="w-8 h-8 rounded-full bg-brand-100 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  {targetUser.image ? <img src={targetUser.image} alt="" className="w-full h-full object-cover" /> : <span className="text-xs font-bold text-brand-700">{targetUser.name?.[0] || "U"}</span>}
+                </div>
+              )}
+              <div className={`p-3 rounded-2xl text-sm shadow-sm border ${
+                isMine 
+                  ? 'bg-brand-600 text-white rounded-tr-sm border-brand-700' 
+                  : 'bg-white text-gray-800 rounded-tl-sm border-brand-50'
+              }`}>
+                {msg.content}
+              </div>
+            </div>
+          );
+        })}
       </main>
 
-      <footer className="sticky bottom-0 bg-white border-t border-gray-100 p-4 pb-safe">
-        <div className="max-w-md mx-auto flex items-center gap-2">
-          <input 
-            type="text" 
-            placeholder="Escribe un mensaje..." 
-            className="flex-1 bg-gray-100 rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-          />
-          <button className="w-12 h-12 bg-brand-600 rounded-full flex items-center justify-center text-white flex-shrink-0 hover:bg-brand-700 transition-colors shadow-md">
-            <Send className="w-5 h-5 ml-1" />
-          </button>
-        </div>
-      </footer>
+      <ChatForm targetUserId={targetUser.id} />
     </div>
   );
 }
